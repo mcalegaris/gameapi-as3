@@ -1,33 +1,1 @@
-﻿package Playtomic
-{
-	import flash.utils.Dictionary;
-
-	public final class PlayerLevel
-	{
-		public function PlayerLevel() 
-		{ 
-			this.SDate = new Date();
-			this.RDate = "Just now";
-		}
-
-		public var LevelId:String;
-		public var PlayerSource:String = "";
-		public var PlayerId:int = 0;
-		public var PlayerName:String = "";
-		public var Permalink:String;
-		public var Name:String;
-		public var Data:String;
-		public var Votes:int;
-		public var Plays:int;
-		public var Rating:Number;
-		public var Score:int;
-		public var SDate:Date;
-		public var RDate:String;
-		public var CustomData:Object = {};
-
-		public function Thumbnail():String
-		{
-			return "http://g" + Log.GUID + ".api.playtomic.com/playerlevels/thumb.aspx?swfid=" + Log.SWFID + "&levelid=" + this.LevelId;
-		}
-	}
-}
+﻿package Playtomic{	import flash.utils.Dictionary;	import flash.utils.ByteArray;	import flash.display.BitmapData;	import flash.display.Bitmap;	import flash.display.Loader;	public final class PlayerLevel	{		public function PlayerLevel() 		{ 			this.SDate = new Date();			this.RDate = "Just now";		}		public var LevelId:String;		public var PlayerSource:String = "";		public var PlayerId:int = 0;		public var PlayerName:String = "";		public var Permalink:String;		public var Name:String;		public var Data:String;		public var ThumbData:String;		public var Votes:int;		public var Plays:int;		public var Rating:Number;		public var Score:int;		public var SDate:Date;		public var RDate:String;		public var CustomData:Object = {};				public function Thumb():BitmapData		{			var bytearray:ByteArray = Encode.Base64Decode(this.ThumbData);			var loader:Loader = new Loader();			loader.loadBytes(bytearray);			return Bitmap(loader).bitmapData;		}		public function Thumbnail():String		{			return "http://g" + Log.GUID + ".api.playtomic.com/playerlevels/thumb.aspx?swfid=" + Log.SWFID + "&levelid=" + this.LevelId;		}	}}
