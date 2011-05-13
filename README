@@ -127,8 +127,6 @@ LINK TRACKING
 Link tracking can give you information on how many people click the links 
 in your games, including (Flash only) identifying sites that block links.
 
-For AS2 and AS3:
-
 Playtomic.Link.Open(url, name, group)
 
 	url = "http://playtomic.com/"
