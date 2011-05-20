@@ -1,4 +1,4 @@
-﻿package LeaderBoardsAPI{
+﻿package Playtomic.LeaderboardsAPI{
 	public class ListFB extends main{
 		
 		public var mode:String = "alltime";

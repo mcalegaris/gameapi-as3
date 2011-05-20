@@ -1,4 +1,8 @@
-﻿package LeaderboardsAPI{
+﻿package Playtomic.LeaderboardsAPI{
+	
+	import flash.net.URLLoader;
+	import Playtomic.PlayerScore;
+	
 	public class responseData{
 		
 		private var data:XML;

@@ -1,10 +1,23 @@
-﻿package LeaderBoardsAPI{
+﻿package Playtomic.LeaderboardsAPI{
+	
+	import Playtomic.PlayerScore;
+	import Playtomic.Encode;
+	import Playtomic.Log;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.net.URLVariables;
+	import flash.net.URLRequestMethod;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.events.HTTPStatusEvent;
+	import flash.events.SecurityErrorEvent;
+	
 	public class main{
 		
 		//Save
 		protected var _facebook:Boolean = false;
 		protected var _allowduplicates:Boolean = false;
-		protected var _score:PlayerScore;
+		
 		
 		//List
 		protected var _global:Boolean = true;//not in ListFB
@@ -17,14 +30,18 @@
 		//Both
 		protected var _highest:Boolean = true;
 		
+		//run time
 		protected var sendaction:URLLoader = new URLLoader;
 		protected var handled:Boolean = false;
+		protected var postdata:URLVariables = new URLVariables();
+		protected var rData:responseData;
+		protected var request:URLRequest = new URLRequest();
 		
-		protected var table:String;
-		protected var callback:Function;
-		protected var postdata:URLVariables;
+		//constructor
+		protected var table:String;//REQUIRED
+		protected var callback:Function;//REQUIRED
+		protected var score:PlayerScore;
 		
-		protected var request:URLRequest
 		
 		
 		public function main(_table:String, _callback:Function):void{
@@ -37,7 +54,10 @@
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
-		
+			request.url
+			
+			setURLRequest();
+			
 			listen();
 			sendaction.load(request);
 		}
@@ -51,7 +71,7 @@
 			callback=null;
 			sendaction=null;
 			request=null;
-			_score=null;
+			score=null;
 			_customfilters=null;
 		}
 		protected function listen():void{
@@ -78,46 +98,50 @@
 			
 			var numcustomfilters:int = 0;
 			
-			if(customfilters != null)
+			if(_customfilters != null)
 			{
-				for(var key:String in customfilters)
+				for(var key:String in _customfilters)
 				{
 					postdata["ckey" + numcustomfilters] = key;
-					postdata["cdata" + numcustomfilters] = escape(customfilters[key]);
+					postdata["cdata" + numcustomfilters] = escape(_customfilters[key]);
 					numcustomfilters++;
 				}
 			}
 			postdata["customfilters"] = numcustomfilters;
 		}
 		protected function updateSavePostData():void{
+			trace("update save post data");
 			postdata = new URLVariables();
 			postdata["table"] = escape(table);
 			postdata["highest"] = _highest ? "y" : "n";
-			postdata["name"] = escape(_score.Name);
-			postdata["points"] = _score.Points.toString();
+			postdata["name"] = escape(score.Name);
+			postdata["points"] = score.Points.toString();
 			postdata["allowduplicates"] = _allowduplicates ? "y" : "n";
-			postdata["auth"] = Encode.MD5(Log.SourceUrl + s);
+			postdata["auth"] = Encode.MD5(Log.SourceUrl + score.Points.toString());
 			postdata["fb"] = _facebook ? "y" : "n";
-			postdata["fbuserid"] = _score.FBUserId;
+			postdata["fbuserid"] = score.FBUserId;
+			
+			trace('postdata["points"] '+postdata["points"]);
+			trace('postdata["name"] '+postdata["name"]);
 			
 			var numcustomfields:int = 0;
 			
-			if(_score.CustomData != null)//CustomData from PlayerScore.as
+			if(score.CustomData != null)//CustomData from PlayerScore.as
 			{
-				for(var key:String in _score.CustomData)
+				for(var key:String in score.CustomData)
 				{
 					postdata["ckey" + numcustomfields] = key;
-					postdata["cdata" + numcustomfields] = escape(_score.CustomData[key]);
+					postdata["cdata" + numcustomfields] = escape(score.CustomData[key]);
 					numcustomfields++;
 				}
 			}
 						
 			postdata["customfields"] = numcustomfields;
 		}
-		protected function httpstatusignore():void{
+		protected function httpstatusignore(e:Event=null):void{
 		}
 		
-		protected function bridge():void{
+		protected function bridge(e:Event=null):void{
 			if(callback == null || handled){
 				stop();
 				return;
@@ -125,12 +149,12 @@
 				
 			handled = true;
 			
-			rData = new responseData(loader);//not for Save.as;
+			rData = new responseData(sendaction);//mostly for Listing, but Save also uses it for response:Object
 			
 			successCallback();
 			stop();
 		}
-		protected function fail():void
+		protected function fail(e:Event=null):void
 		{
 			if(callback == null || handled){
 				stop();

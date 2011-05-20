@@ -1,4 +1,8 @@
-﻿package LeaderBoardsAPI{
+﻿package Playtomic.LeaderboardsAPI{
+	
+	import flash.net.URLRequest;
+	import Playtomic.Log;
+	
 	public class List extends main{
 		
 		public var global:Boolean = true;
@@ -7,6 +11,10 @@
 		public var page:int = 1;
 		public var perpage:int = 20;
 		public var highest:Boolean = true;
+		
+		public function List(_table:String, _callback:Function):void{
+			super(_table, _callback);
+		}
 		
 		override public function start():void{
 			_global = global;

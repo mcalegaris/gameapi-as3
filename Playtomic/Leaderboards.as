@@ -40,27 +40,28 @@ package Playtomic
 	import flash.net.URLLoader;
 	import flash.net.URLVariables;
 	import flash.net.URLRequestMethod;
+	import Playtomic.LeaderboardsAPI.SaveAndList;
 
 	public class Leaderboards
 	{
 		//i recommend just using the new LeaderboardsAPI, but here is a legacy method to convert it.
 		public static function SaveAndList(score:PlayerScore, table:String, callback:Function = null, saveOptions:Object = null, listOptions:Object = null):void{
 			//construct,  full class path used due to namespace, can be removed when Leaderboards.as moves to a legacy folder.
-			var SAL:LeaderboardsAPI.SaveAndList = new LeaderboardsAPI.SaveAndList(score, table, callback);
+			var SAL:Playtomic.LeaderboardsAPI.SaveAndList = new Playtomic.LeaderboardsAPI.SaveAndList(score, table, callback);
 			
 			if(saveOptions){
-				if(options.hasOwnProperty("facebook")) SAL.facebook = listOptions.facebook;
-				if(options.hasOwnProperty("allowduplicates")) SAL.allowduplicates = listOptions.allowduplicates;
+				if(saveOptions.hasOwnProperty("facebook")) SAL.facebook = saveOptions.facebook;
+				if(saveOptions.hasOwnProperty("allowduplicates")) SAL.allowduplicates = saveOptions.allowduplicates;
 				//if(options.hasOwnProperty("highest")) SAL.highest = listOptions.highest;
 			}
 			if(listOptions){
-				if(options.hasOwnProperty("friendslist")) SAL.friendslist = listOptions.friendslist;
-				if(options.hasOwnProperty("global")) SAL.global = listOptions.global;
-				if(options.hasOwnProperty("highest")) SAL.highest = listOptions.highest;
-				if(options.hasOwnProperty("mode")) SAL.mode = listOptions.mode;
-				if(options.hasOwnProperty("customfilters")) SAL.customfilters = listOptions.customfilters;
-				if(options.hasOwnProperty("page")) SAL.page = listOptions.page;
-				if(options.hasOwnProperty("perpage")) SAL.perpage = listOptions.perpage;
+				if(listOptions.hasOwnProperty("friendslist")) SAL.friendslist = listOptions.friendslist;
+				if(listOptions.hasOwnProperty("global")) SAL.global = listOptions.global;
+				if(listOptions.hasOwnProperty("highest")) SAL.highest = listOptions.highest;
+				if(listOptions.hasOwnProperty("mode")) SAL.mode = listOptions.mode;
+				if(listOptions.hasOwnProperty("customfilters")) SAL.customfilters = listOptions.customfilters;
+				if(listOptions.hasOwnProperty("page")) SAL.page = listOptions.page;
+				if(listOptions.hasOwnProperty("perpage")) SAL.perpage = listOptions.perpage;
 			}
 			
 			SAL.start();
@@ -279,7 +280,7 @@ package Playtomic
 						
 			postdata["customfields"] = customfields;
 			
-			trace(postdata.toString());
+			trace("POSTDATA: "+postdata.toString());
 
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/save.aspx?swfid=" + Log.SWFID + "&url=" + Log.SourceUrl + "&r=" + Math.random());
 			request.data = postdata;

@@ -1,4 +1,8 @@
-﻿package LeaderBoardsAPI{
+﻿package Playtomic.LeaderboardsAPI{
+	import Playtomic.PlayerScore;
+	import Playtomic.Log;
+	import flash.net.URLRequest;
+	
 	public class SaveAndList extends main{
 		
 		public var global:Boolean = true;
@@ -11,10 +15,14 @@
 		
 		public var facebook:Boolean = false;
 		public var allowduplicates:Boolean = false;
-		public var score:PlayerScore;
-		public var highest:Boolean = true;
+		//public var highest:Boolean = true;
 		
 		public var pageOfScore:Boolean = false;//return the page that includes the sent player score.
+		
+		public function SaveAndList(_score:PlayerScore, _table:String, _callback:Function):void{
+			score = _score;
+			super(_table, _callback);
+		}
 		
 		override public function start():void{
 			
@@ -27,7 +35,6 @@
 			_highest = highest;
 			_facebook = facebook;
 			_allowduplicates = allowduplicates;
-			_score = score;
 			_highest = highest;
 			
 			if(facebook){
@@ -53,7 +60,7 @@
 		}
 		override protected function successCallback(){
 			//callback signature: callback(scores:Array, numscores:int, score:PlayerScore, rank:int, response:Object):void
-			callback(rData.results, rData.numscores, rData.score, rData.rank, {Success: rData.status == 1, ErrorCode: rData.errorcode})
+			callback(rData.results, rData.numscores, score, rData.rank, {Success: rData.status == 1, ErrorCode: rData.errorcode})
 		}
 		
 	}
