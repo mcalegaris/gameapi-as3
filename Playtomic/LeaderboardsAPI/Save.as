@@ -6,7 +6,6 @@
 	
 	public class Save extends main{
 		
-		public var global:Boolean = true;
 		public var facebook:Boolean = false;
 		public var allowduplicates:Boolean = false;
 		public var highest:Boolean = true;
@@ -21,7 +20,6 @@
 				trace("ERROR: please set score to an instance of PlayerScore.as");
 			}
 			
-			_global = global;
 			_facebook = facebook;
 			_allowduplicates = allowduplicates;
 			_highest = highest;
@@ -32,7 +30,6 @@
 		override protected function setURLRequest():void{
 			trace("Log.SourceUrl: "+Log.SourceUrl);
 			request = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/save.aspx?swfid=" + Log.SWFID + "&url=" + Log.SourceUrl + "&r=" + Math.random());
-			//request = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/save.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
 		}
 		override protected function updatePostData():void{
 			updateSavePostData();

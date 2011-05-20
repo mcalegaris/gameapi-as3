@@ -2,11 +2,12 @@
 	import Playtomic.PlayerScore;
 	import Playtomic.Log;
 	import flash.net.URLRequest;
+	import Playtomic.type.MODE;
 	
 	public class SaveAndList extends main{
 		
 		public var global:Boolean = true;
-		public var mode:String = "alltime";
+		public var mode:String = MODE.ALL;
 		public var customfilters:Object = {};
 		public var page:int = 1;
 		public var perpage:int = 20;
@@ -55,7 +56,7 @@
 			updateSavePostData();
 		}
 		override protected function failCallback():void{
-			//callback signature: callback(scores:Array, numscores:int, response:Object):void
+			//callback signature: callback(scores:Array, numscores:int, score:PlayerScore, rank:int, response:Object):void
 			callback([], 0, score, 0, {Success: false, ErrorCode: 1});
 		}
 		override protected function successCallback(){

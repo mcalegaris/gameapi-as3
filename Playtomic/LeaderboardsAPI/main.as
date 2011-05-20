@@ -3,6 +3,7 @@
 	import Playtomic.PlayerScore;
 	import Playtomic.Encode;
 	import Playtomic.Log;
+	import Playtomic.type.MODE;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.net.URLVariables;
@@ -12,6 +13,7 @@
 	import flash.events.HTTPStatusEvent;
 	import flash.events.SecurityErrorEvent;
 	
+	
 	public class main{
 		
 		//Save
@@ -20,8 +22,8 @@
 		
 		
 		//List
-		protected var _global:Boolean = true;//not in ListFB
-		protected var _mode:String = "alltime";
+		protected var _global:Boolean = true;
+		protected var _mode:String = MODE.ALL;
 		protected var _customfilters:Object = {};
 		protected var _page:int = 1;
 		protected var _perpage:int = 20;
@@ -52,11 +54,10 @@
 		public function start():void{
 			updatePostData();
 			
+			setURLRequest();
+			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
-			request.url
-			
-			setURLRequest();
 			
 			listen();
 			sendaction.load(request);

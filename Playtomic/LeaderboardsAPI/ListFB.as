@@ -1,14 +1,25 @@
 ﻿package Playtomic.LeaderboardsAPI{
+	
+	import Playtomic.Log;
+	import flash.net.URLRequest
+	import Playtomic.type.MODE;
+	
 	public class ListFB extends main{
 		
-		public var mode:String = "alltime";
+		public var global:Boolean = true;
+		public var mode:String = MODE.ALL;
 		public var customfilters:Object = {};
 		public var page:int = 1;
 		public var perpage:int = 20;
 		public var highest:Boolean = true;
 		public var friendslist:Array = new Array();
 		
+		public function ListFB(_table:String, _callback:Function):void{
+			super(_table, _callback);
+		}
+		
 		override public function start():void{
+			_global = global;
 			_mode = mode;
 			_customfilters = customfilters;
 			_page = page;

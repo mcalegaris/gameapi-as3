@@ -2,11 +2,12 @@
 	
 	import flash.net.URLRequest;
 	import Playtomic.Log;
+	import Playtomic.type.MODE;
 	
 	public class List extends main{
 		
 		public var global:Boolean = true;
-		public var mode:String = "alltime";
+		public var mode:String = MODE.ALL;
 		public var customfilters:Object = {};
 		public var page:int = 1;
 		public var perpage:int = 20;
