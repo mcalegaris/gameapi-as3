@@ -3,6 +3,7 @@
 	import Playtomic.Log;
 	import flash.net.URLRequest;
 	import Playtomic.type.MODE;
+	import Playtomic.type.Response;
 	
 	public class SaveAndList extends main{
 		
@@ -18,7 +19,7 @@
 		public var allowduplicates:Boolean = false;
 		//public var highest:Boolean = true;
 		
-		public var pageOfScore:Boolean = false;//return the page that includes the sent player score.
+		public var pageofscore:Boolean = false;//return the page that includes the sent player score.
 		
 		public function SaveAndList(_score:PlayerScore, _table:String, _callback:Function):void{
 			score = _score;
@@ -44,7 +45,7 @@
 				friendslist = new Array(); //no facebook means no friendslist;
 			}
 			
-			if(pageOfScore) page = -1;
+			if(pageofscore) page = -1;
 			super.start();
 		}
 		
@@ -56,12 +57,11 @@
 			updateSavePostData();
 		}
 		override protected function failCallback():void{
-			//callback signature: callback(scores:Array, numscores:int, score:PlayerScore, rank:int, response:Object):void
-			callback([], 0, score, 0, {Success: false, ErrorCode: 1});
+			callback([], 0, score, 0, new Response(false, 1));
 		}
 		override protected function successCallback(){
-			//callback signature: callback(scores:Array, numscores:int, score:PlayerScore, rank:int, response:Object):void
-			callback(rData.results, rData.numscores, score, rData.rank, {Success: rData.status == 1, ErrorCode: rData.errorcode})
+			//callback signature: callback(scores:Array, numscores:int, score:PlayerScore, rank:int, response:Response):void
+			callback(rData.results, rData.numscores, score, rData.rank, rData.response)
 		}
 		
 	}

@@ -2,6 +2,7 @@
 	
 	import Playtomic.PlayerScore;
 	import Playtomic.Log;
+	import Playtomic.type.Response;
 	import flash.net.URLRequest;
 	
 	public class Save extends main{
@@ -28,19 +29,17 @@
 		}
 		
 		override protected function setURLRequest():void{
-			trace("Log.SourceUrl: "+Log.SourceUrl);
 			request = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/save.aspx?swfid=" + Log.SWFID + "&url=" + Log.SourceUrl + "&r=" + Math.random());
 		}
 		override protected function updatePostData():void{
 			updateSavePostData();
-			trace("Save-POSTDATA: "+postdata.toString());
 		}
 		override protected function failCallback():void{
-			callback(score, {Success: false, ErrorCode: 1});
+			callback(score, new Response(false, 1));
 		}
 		override protected function successCallback(){
-			//callback signature: callback(score:PlayerScore, response:Object):void
-			callback(score, {Success: rData.status == 1, ErrorCode: rData.errorcode})
+			//callback signature: callback(score:PlayerScore, response:Response):void
+			callback(score, rData.response)
 		}
 		
 	}

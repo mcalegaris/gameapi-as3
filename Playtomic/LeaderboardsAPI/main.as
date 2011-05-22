@@ -20,7 +20,6 @@
 		protected var _facebook:Boolean = false;
 		protected var _allowduplicates:Boolean = false;
 		
-		
 		//List
 		protected var _global:Boolean = true;
 		protected var _mode:String = MODE.ALL;
@@ -55,6 +54,9 @@
 			updatePostData();
 			
 			setURLRequest();
+			
+			trace("request.url: "+request.url);
+			trace("POSTDATA: "+postdata.toString());
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
@@ -111,7 +113,6 @@
 			postdata["customfilters"] = numcustomfilters;
 		}
 		protected function updateSavePostData():void{
-			trace("update save post data");
 			postdata = new URLVariables();
 			postdata["table"] = escape(table);
 			postdata["highest"] = _highest ? "y" : "n";
@@ -121,9 +122,6 @@
 			postdata["auth"] = Encode.MD5(Log.SourceUrl + score.Points.toString());
 			postdata["fb"] = _facebook ? "y" : "n";
 			postdata["fbuserid"] = score.FBUserId;
-			
-			trace('postdata["points"] '+postdata["points"]);
-			trace('postdata["name"] '+postdata["name"]);
 			
 			var numcustomfields:int = 0;
 			

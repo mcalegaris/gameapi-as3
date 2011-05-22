@@ -3,6 +3,7 @@
 	import Playtomic.Log;
 	import flash.net.URLRequest
 	import Playtomic.type.MODE;
+	import Playtomic.type.Response;
 	
 	public class ListFB extends main{
 		
@@ -37,11 +38,11 @@
 			updateListPostData();
 		}
 		override protected function failCallback():void{
-			callback([], 0, {Success: false, ErrorCode: 1});
+			callback([], 0, new Response(false, 1));
 		}
 		override protected function successCallback(){
-			//callback signature: callback(scores:Array, numscores:int, response:Object):void
-			callback(rData.results, rData.numscores, {Success: rData.status == 1, ErrorCode: rData.errorcode})
+			//callback signature: callback(scores:Array, numscores:int, response:Response):void
+			callback(rData.results, rData.numscores, rData.response)
 		}
 		
 	}

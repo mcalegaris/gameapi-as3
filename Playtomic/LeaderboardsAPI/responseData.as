@@ -2,12 +2,12 @@
 	
 	import flash.net.URLLoader;
 	import Playtomic.PlayerScore;
+	import Playtomic.type.Response;
 	
 	public class responseData{
 		
 		private var data:XML;
-		public var status:int;
-		public var errorcode:int;
+		public var response:Response;
 		public var numscores:int;
 		public var results:Array = new Array();
 		
@@ -15,12 +15,11 @@
 		
 		public function responseData(loader:URLLoader):void{ //parse the listed scores
 			data = XML(loader["data"]);
-			status = parseInt(data["status"]);
-			errorcode = parseInt(data["errorcode"]);
+			response = new Response(parseInt(data["status"]) == 1, parseInt(data["errorcode"]))
 			numscores = parseInt(data["numscores"]);
 			rank = parseInt(data["rank"]);
 			
-			if(status == 1)
+			if(response.Success)
 			{
 				var entries:XMLList = data["score"];
 				var datestring:String;

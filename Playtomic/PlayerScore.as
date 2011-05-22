@@ -33,6 +33,7 @@
 package Playtomic
 {
 	import flash.utils.Dictionary;
+	import flash.utils.getQualifiedClassName;
 
 	public final class PlayerScore
 	{
@@ -45,5 +46,36 @@ package Playtomic
 		public var SDate:Date;
 		public var RDate:String;
 		public var CustomData:Object = {};
+		
+		public function toString():String{
+			var str:String = "::PlayerScore::\n";
+			str += " Name: "+Name;
+			str += "\n";
+			str += " Points: "+Points;
+			return str;
+		}
+		public function toStringAll():String{
+			var str:String = "::PlayerScore::\n";
+			str += " Name: "+Name;
+			str += "\n";
+			str += " FBUserId: "+FBUserId;
+			str += "\n";
+			str += " Points: "+Points;
+			str += "\n";
+			str += " Website: "+Website;
+			str += "\n";
+			str += " SDate: "+SDate;
+			str += "\n";
+			str += " RDate: "+RDate;
+			str += "\n";
+			str += " CustomData>>\n"
+			for(var val:* in CustomData){
+				str += "   "+val+":"+getQualifiedClassName(CustomData[val])+" = "+CustomData[val];
+				str += "\n";
+			}
+			str += " <<CustomData"
+			str += "CustomData: "+CustomData;
+			return str;
+		}
 	}
 }
