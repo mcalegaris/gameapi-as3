@@ -10,9 +10,11 @@
 		public var customfilters:Object = {};
 		public var page:int = 1;
 		public var perpage:int = 20;
+		public var facebook:Boolean = false;
+		public var friendslist:Array = [];
 		
 		
-		public function ListOptions(global:Boolean = true, highest:Boolean = true, mode:String = "MODE.ALL", customfilters:Object = null, page:int = 1, perpage:int = 20){
+		public function ListOptions(global:Boolean = true, highest:Boolean = true, mode:String = "MODE.ALL", customfilters:Object = null, page:int = 1, perpage:int = 20, facebook:Boolean=false, friendslist=null){
 			if(mode == "MODE.ALL") mode = MODE.ALL;
 			
 			this.global=global;
@@ -21,6 +23,8 @@
 			this.customfilters=customfilters;
 			this.page=page;
 			this.perpage=perpage;
+			this.facebook=facebook;
+			this.friendslist=friendslist;
 		}
 		public function toString():String{
 			var str:String = "::PlayerScore::\n";
@@ -39,6 +43,8 @@
 			str += " page: "+page;
 			str += "\n";
 			str += " perpage: "+perpage;
+			str += "\n";
+			str += " friendslist: "+friendslist;
 			
 			return str;
 		}

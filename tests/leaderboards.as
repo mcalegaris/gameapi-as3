@@ -8,7 +8,6 @@
 	
 	import Playtomic.type.SaveOptions;
 	import Playtomic.type.ListOptions;
-	import Playtomic.type.ListFBOptions;
 	import Playtomic.type.SaveAndListOptions;
 	
 	import Playtomic.PlayerScore;
@@ -28,7 +27,6 @@
 			
 			saveBtn.addEventListener(MouseEvent.CLICK, testSave);
 			listBtn.addEventListener(MouseEvent.CLICK, testList);
-			listfbBtn.addEventListener(MouseEvent.CLICK, testListFB);
 			salBtn.addEventListener(MouseEvent.CLICK, testSaveAndList);
 			
 			list_mode.selectedIndex = 3;
@@ -53,21 +51,11 @@
 		//////////////////////////////////////////////////
 		private function testList(me:MouseEvent=null):void{
 			trace("list_perpage.value: "+list_perpage.value);
-			var listOptions:ListOptions = new ListOptions(list_global.selected, list_highest.selected, list_mode.value, stringToObject(list_customfilters.text), list_page.value, list_perpage.value);
+			var listOptions:ListOptions = new ListOptions(list_global.selected, list_highest.selected, list_mode.value, stringToObject(list_customfilters.text), list_page.value, list_perpage.value, list_facebook.selected, stringToArray(list_friendslist.text));
 			Leaderboards.List(list_table.text, listComplete, listOptions);
 			trace("test list");
 		}
 		private function listComplete(scores:Array, numscores:int, response:Object):void{
-			trace("scores: "+scores);
-			trace("numscores: "+numscores);
-			trace(response);
-		}
-		private function testListFB(me:MouseEvent=null):void{//not fully tested
-			var listfbOptions:ListFBOptions = new ListFBOptions(listfb_global.selected, listfb_highest.selected, listfb_mode.value, stringToObject(listfb_customfilters.text), listfb_page.value, listfb_perpage.value, stringToArray(listfb_friendslist.text));
-			Leaderboards.ListFB(listfb_table.text, listfbComplete, listfbOptions);
-			trace("test list");
-		}
-		private function listfbComplete(scores:Array, numscores:int, response:Object):void{
 			trace("scores: "+scores);
 			trace("numscores: "+numscores);
 			trace(response);
@@ -77,7 +65,7 @@
 			var score:PlayerScore = new PlayerScore(sal_name.text, sal_points.value);
 			score.CustomData = stringToObject(sal_customdata.text);
 			
-			var salOptions:SaveAndListOptions = new SaveAndListOptions(sal_allowduplicates.selected, sal_global.selected, sal_highest.selected, sal_mode.value, stringToObject(sal_customfilters.text), sal_perpage.value);
+			var salOptions:SaveAndListOptions = new SaveAndListOptions(sal_allowduplicates.selected, sal_global.selected, sal_highest.selected, sal_mode.value, stringToObject(sal_customfilters.text), sal_perpage.value, sal_facebook.selected, stringToArray(sal_friendslist.text));
 			
 			Leaderboards.SaveAndList(score, sal_table.text, saveandlistComplete, salOptions);
 			
@@ -110,6 +98,9 @@
 			return obj;
 		}
 		private function stringToArray(str:String):Array{
+			if(str == "") return new Array();
+			if(str.indexOf(",")<0) return [str];
+			
 			return str.split(",");
 		}
 	}

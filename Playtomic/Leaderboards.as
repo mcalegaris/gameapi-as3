@@ -51,7 +51,6 @@ package Playtomic
 			if(options == null)
 				options = new Object();
 			
-			//var facebook:Boolean = options.hasOwnProperty("facebook") ? options["facebook"] : false;
 			var allowduplicates:Boolean = options.hasOwnProperty("allowduplicates") ? options["allowduplicates"] : false;
 			var global:Boolean = options.hasOwnProperty("global") ? options["global"] : true;
 			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
@@ -59,7 +58,7 @@ package Playtomic
 			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : {};
 			var page:int = options.hasOwnProperty("page") ? options["page"] : 1;
 			var perpage:int = options.hasOwnProperty("perpage") ? options["perpage"] : 20;
-			//var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
+			var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
 			
 			var sendaction:URLLoader = new URLLoader();
 			var handled:Boolean = false;
@@ -118,9 +117,7 @@ package Playtomic
 				}
 			}
 						
-			
 			//SAVE
-			
 			postdata["url"] = Log.SourceUrl;
 			postdata["table"] = escape(table);
 			postdata["highest"] = highest ? "y" : "n";
@@ -128,8 +125,6 @@ package Playtomic
 			postdata["points"] = score.Points.toString();
 			postdata["allowduplicates"] = allowduplicates ? "y" : "n";
 			postdata["auth"] = Encode.MD5(Log.SourceUrl + score.Points.toString());
-			//postdata["fb"] = facebook ? "y" : "n";
-			//postdata["fbuserid"] = score.FBUserId;
 			postdata["numfields"] = numfields;
 			
 			//LIST
@@ -137,168 +132,25 @@ package Playtomic
 			postdata["mode"] = mode;
 			postdata["page"] = page;
 			postdata["perpage"] = perpage;
-			//postdata["friendslist"] = friendslist.join(",");
-			//postdata["highest"] = _highest ? "y" : "n";
 			postdata["numfilters"] = numfilters;
 			
+			
+			var request:URLRequest
+			
+			if(score.FBUserId != ""){
+				if(friendslist.length>0){
+					postdata["friendslist"] = friendslist.join(",");
+				}
+				postdata["fbuserid"] = score.FBUserId;
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlistfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			}else{
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			}
 						
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;			
 			
-			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
-			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
-			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
-			sendaction.load(request);
-		}
-		
-		//callback signature: callback(scores:Array, numscores:int, response:Response):void
-		public static function List(table:String, callback:Function, options:Object = null):void
-		{
-			if(options == null)
-				options = new Object();
-
-			var global:Boolean = options.hasOwnProperty("global") ? options["global"] : true;
-			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
-			var mode:String = options.hasOwnProperty("mode") ? options["mode"] : "alltime";
-			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : {};
-			var page:int = options.hasOwnProperty("page") ? options["page"] : 1;
-			var perpage:int = options.hasOwnProperty("perpage") ? options["perpage"] : 20;
-			var sendaction:URLLoader = new URLLoader();
-			var handled:Boolean = false;
-
-			if(callback != null)
-			{
-				var bridge:Function = function():void
-				{	
-					if(callback == null || handled)
-						return;
-						
-					handled = true;
-					ProcessScores(sendaction, callback);
-				}
-
-				sendaction.addEventListener(Event.COMPLETE, bridge);
-			}
-
-			var fail:Function = function():void
-			{
-				if(callback == null || handled)
-					return;
-					
-				handled = true;
-					
-				callback([], 0, new Response(false,  1));
-			}
-			
-			var httpstatusignore:Function = function():void
-			{
-				
-			}
-			
-			var postdata:URLVariables = new URLVariables();			
-			var numfilters:int = 0;
-			
-			if(customfilters != null)
-			{
-				for(var key:String in customfilters)
-				{
-					postdata["ckey" + numfilters] = key;
-					postdata["cdata" + numfilters] = escape(customfilters[key]);
-					numfilters++;
-				}
-			}
-			
-			postdata["url"] = (global || Log.SourceUrl == null ? "global" : Log.SourceUrl);
-			postdata["mode"] = mode;
-			postdata["page"] = page;
-			postdata["perpage"] = perpage;
-			postdata["highest"] = highest ? "y" : "n";
-			postdata["customfilters"] = numfilters;
-			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
-			request.data = postdata;
-			request.method = URLRequestMethod.POST;			
-			
-			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
-			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
-			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
-			sendaction.load(request);
-		}
-		
-		//callback signature: callback(scores:Array, numscores:int, response:Response):void
-		public static function ListFB(table:String, callback:Function, options:Object = null):void
-		{
-			if(options == null)
-				options = new Object();
-			
-			var global:Boolean = options.hasOwnProperty("global") ? options["global"] : true;
-			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
-			var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
-			var mode:String = options.hasOwnProperty("mode") ? options["mode"] : "alltime";
-			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : new Object();
-			var page:int = options.hasOwnProperty("page") ? options["page"] : 1;
-			var perpage:int = options.hasOwnProperty("perpage") ? options["perpage"] : 20;
-			var sendaction:URLLoader = new URLLoader();
-			var handled:Boolean = false;
-			
-			if(callback != null)
-			{
-				var bridge:Function = function():void
-				{	
-					if(callback == null || handled)
-						return;
-						
-					handled = true;
-					ProcessScores(sendaction, callback);
-				}
-
-				sendaction.addEventListener(Event.COMPLETE, bridge);
-			}
-
-			var fail:Function = function():void
-			{
-				if(callback == null || handled)
-					return;
-					
-				handled = true;
-					
-				callback([], 0, new Response(false,  1));
-			}
-			
-			var httpstatusignore:Function = function():void
-			{
-				
-			}
-			
-			var postdata:URLVariables = new URLVariables();
-			postdata["friendslist"] = friendslist.join(",");
-			
-			var numfilters:int = 0;
-			
-			if(customfilters != null)
-			{
-				for(var key:String in customfilters)
-				{
-					postdata["ckey" + numfilters] = key;
-					postdata["cdata" + numfilters] = escape(customfilters[key]);
-					numfilters++;
-				}
-			}
-			
-			
-			postdata["url"] = (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) 
-			postdata["mode"] = mode;
-			postdata["page"] = page;
-			postdata["perpage"] = perpage;
-			postdata["friendslist"] = friendslist.join(",");
-			postdata["highest"] = highest ? "y" : "n";
-			postdata["customfilters"] = numfilters;
-			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
-			request.data = postdata;
-			request.method = URLRequestMethod.POST;
-
 			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
 			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
 			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
@@ -390,6 +242,89 @@ package Playtomic
 			trace("POSTDATA: "+postdata.toString());
 			
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/save.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			request.data = postdata;
+			request.method = URLRequestMethod.POST;
+
+			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
+			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
+			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
+			sendaction.load(request);
+		}
+		
+		//callback signature: callback(scores:Array, numscores:int, response:Response):void
+		public static function List(table:String, callback:Function, options:Object = null):void
+		{
+			if(options == null)
+				options = new Object();
+			
+			var global:Boolean = options.hasOwnProperty("global") ? options["global"] : true;
+			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
+			var mode:String = options.hasOwnProperty("mode") ? options["mode"] : "alltime";
+			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : new Object();
+			var page:int = options.hasOwnProperty("page") ? options["page"] : 1;
+			var perpage:int = options.hasOwnProperty("perpage") ? options["perpage"] : 20;
+			var facebook:Boolean = options.hasOwnProperty("facebook") ? options["facebook"] : false;
+			var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
+			var sendaction:URLLoader = new URLLoader();
+			var handled:Boolean = false;
+			
+			if(callback != null)
+			{
+				var bridge:Function = function():void
+				{	
+					if(callback == null || handled)
+						return;
+						
+					handled = true;
+					ProcessScores(sendaction, callback);
+				}
+
+				sendaction.addEventListener(Event.COMPLETE, bridge);
+			}
+
+			var fail:Function = function():void
+			{
+				if(callback == null || handled)
+					return;
+					
+				handled = true;
+					
+				callback([], 0, new Response(false,  1));
+			}
+			
+			var httpstatusignore:Function = function():void
+			{
+				
+			}
+			
+			var postdata:URLVariables = new URLVariables();
+			
+			
+			var numfilters:int = 0;
+			
+			for(var key:String in customfilters){
+				postdata["ckey" + numfilters] = key;
+				postdata["cdata" + numfilters] = escape(customfilters[key]);
+				numfilters++;
+			}
+			
+			postdata["url"] = (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) 
+			postdata["mode"] = mode;
+			postdata["page"] = page;
+			postdata["perpage"] = perpage;
+			postdata["highest"] = highest ? "y" : "n";
+			postdata["customfilters"] = numfilters;
+			
+			var request:URLRequest
+			if(facebook){
+				if(friendslist.length>0){
+					postdata["friendslist"] = friendslist.join(",");
+				}
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			}else{
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			}
+			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
 
