@@ -1,5 +1,5 @@
 ﻿package Playtomic.type{
-	public class Response{
+	public class Response extends Object{
 		public var Success:Boolean = false;
 		public var ErrorCode:int = -2;
 		

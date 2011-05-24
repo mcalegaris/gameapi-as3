@@ -40,32 +40,83 @@ package Playtomic
 	import flash.net.URLLoader;
 	import flash.net.URLVariables;
 	import flash.net.URLRequestMethod;
-	import Playtomic.LeaderboardsAPI.SaveAndList;
+	import Playtomic.type.Response;
 
 	public class Leaderboards
 	{
-		//i recommend just using the new LeaderboardsAPI, but here is a legacy method to convert it.
-		public static function SaveAndList(score:PlayerScore, table:String, callback:Function = null, saveOptions:Object = null, listOptions:Object = null):void{
-			//construct,  full class path used due to namespace, can be removed when Leaderboards.as moves to a legacy folder.
-			var SAL:Playtomic.LeaderboardsAPI.SaveAndList = new Playtomic.LeaderboardsAPI.SaveAndList(score, table, callback);
+		//, score:PlayerScore, rank:int (should eventually be in the callback)
+		//callback signature: callback(scores:Array, numscores:int, response:Response):void
+		public static function SaveAndList(score:PlayerScore, table:String, callback:Function = null, options:Object=null):void
+		{
+			if(options == null)
+				options = new Object();
 			
-			if(saveOptions){
-				if(saveOptions.hasOwnProperty("facebook")) SAL.facebook = saveOptions.facebook;
-				if(saveOptions.hasOwnProperty("allowduplicates")) SAL.allowduplicates = saveOptions.allowduplicates;
-				//if(options.hasOwnProperty("highest")) SAL.highest = listOptions.highest;
+			var facebook:Boolean = options.hasOwnProperty("facebook") ? options["facebook"] : false;
+			var allowduplicates:Boolean = options.hasOwnProperty("allowduplicates") ? options["allowduplicates"] : false;
+			var global:Boolean = options.hasOwnProperty("global") ? options["global"] : true;
+			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
+			var mode:String = options.hasOwnProperty("mode") ? options["mode"] : "alltime";
+			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : {};
+			var page:int = options.hasOwnProperty("page") ? options["page"] : 1;
+			var perpage:int = options.hasOwnProperty("perpage") ? options["perpage"] : 20;
+			var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
+			
+			var sendaction:URLLoader = new URLLoader();
+			var handled:Boolean = false;
+
+			if(callback != null)
+			{
+				var bridge:Function = function():void
+				{	
+					if(callback == null || handled)
+						return;
+						
+					handled = true;
+					ProcessScores(sendaction, callback);
+				}
+
+				sendaction.addEventListener(Event.COMPLETE, bridge);
 			}
-			if(listOptions){
-				if(listOptions.hasOwnProperty("friendslist")) SAL.friendslist = listOptions.friendslist;
-				if(listOptions.hasOwnProperty("global")) SAL.global = listOptions.global;
-				if(listOptions.hasOwnProperty("highest")) SAL.highest = listOptions.highest;
-				if(listOptions.hasOwnProperty("mode")) SAL.mode = listOptions.mode;
-				if(listOptions.hasOwnProperty("customfilters")) SAL.customfilters = listOptions.customfilters;
-				if(listOptions.hasOwnProperty("page")) SAL.page = listOptions.page;
-				if(listOptions.hasOwnProperty("perpage")) SAL.perpage = listOptions.perpage;
+
+			var fail:Function = function():void
+			{
+				if(callback == null || handled)
+					return;
+					
+				handled = true;
+					
+				callback([], 0, new Response(false,  1));
 			}
 			
-			SAL.start();
+			var httpstatusignore:Function = function():void
+			{
+				
+			}
+			
+			var postdata:URLVariables = new URLVariables();			
+			var numcustomfilters:int = 0;
+			
+			if(customfilters != null)
+			{
+				for(var key:String in customfilters)
+				{
+					postdata["ckey" + numcustomfilters] = key;
+					postdata["cdata" + numcustomfilters] = escape(customfilters[key]);
+					numcustomfilters++;
+				}
+			}
+						
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
+			request.data = postdata;
+			request.method = URLRequestMethod.POST;			
+			
+			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
+			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
+			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
+			sendaction.load(request);
 		}
+		
+		//callback signature: callback(scores:Array, numscores:int, response:Response):void
 		public static function List(table:String, callback:Function, options:Object = null):void
 		{
 			if(options == null)
@@ -101,7 +152,7 @@ package Playtomic
 					
 				handled = true;
 					
-				callback([], 0, {Success: false, ErrorCode: 1});
+				callback([], 0, new Response(false,  1));
 			}
 			
 			var httpstatusignore:Function = function():void
@@ -121,7 +172,10 @@ package Playtomic
 					numcustomfilters++;
 				}
 			}
-						
+			
+			//will be swiching to using postdata more, once Vx/list.aspx is ready.
+			//var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/list.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
+			
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/list.aspx?swfid=" + Log.SWFID + "&table=" + table + "&mode=" + mode + "&filters=" + numcustomfilters + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&highest=" + (highest ? "y" : "n") + "&page=" + page + "&perpage=" + perpage + "&" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;			
@@ -131,7 +185,8 @@ package Playtomic
 			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
 			sendaction.load(request);
 		}
-
+		
+		//callback signature: callback(scores:Array, numscores:int, response:Response):void
 		public static function ListFB(table:String, callback:Function, options:Object = null):void
 		{
 			if(options == null)
@@ -141,12 +196,12 @@ package Playtomic
 			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
 			var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
 			var mode:String = options.hasOwnProperty("mode") ? options["mode"] : "alltime";
-			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : {};
+			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : new Object();
 			var page:int = options.hasOwnProperty("page") ? options["page"] : 1;
 			var perpage:int = options.hasOwnProperty("perpage") ? options["perpage"] : 20;
 			var sendaction:URLLoader = new URLLoader();
 			var handled:Boolean = false;
-
+			
 			if(callback != null)
 			{
 				var bridge:Function = function():void
@@ -168,7 +223,7 @@ package Playtomic
 					
 				handled = true;
 					
-				callback([], 0, {Success: false, ErrorCode: 1});
+				callback([], 0, new Response(false,  1));
 			}
 			
 			var httpstatusignore:Function = function():void
@@ -191,6 +246,9 @@ package Playtomic
 				}
 			}
 			
+			//will be swiching to using postdata more, once Vx/list.aspx is ready.
+			//var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
+			
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&table=" + table + "&mode=" + mode + "&filters=" + numcustomfilters + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&highest=" + (highest ? "y" : "n") + "&page=" + page + "&perpage=" + perpage + "&" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
@@ -200,7 +258,8 @@ package Playtomic
 			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
 			sendaction.load(request);
 		}
-
+		
+		//callback signature: callback(score:PlayerScore, response:Response):void
 		public static function Save(score:PlayerScore, table:String, callback:Function = null, options:Object = null):void
 		{
 			if(options == null)
@@ -230,7 +289,7 @@ package Playtomic
 						score.RDate = "Just now";
 					}
 					
-					callback(score, {Success: status == 1, ErrorCode: parseInt(data["errorcode"])});
+					callback(score, new Response(status == 1,  parseInt(data["errorcode"])));
 				}
 
 				sendaction.addEventListener(Event.COMPLETE, bridge);
@@ -242,7 +301,7 @@ package Playtomic
 					return;
 										
 				handled = true;
-				callback(score, {Success: false, ErrorCode: 1});
+				callback(score, new Response(false, 1));
 			}
 			
 			var httpstatusignore:Function = function():void
@@ -339,7 +398,8 @@ package Playtomic
 				}
 			}
 			
-			callback(results, numscores, {Success: status == 1, ErrorCode: errorcode});
+			
+			callback(results, numscores, new Response(status == 1, errorcode));
 		}
 	}
 }

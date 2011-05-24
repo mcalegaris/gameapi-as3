@@ -37,7 +37,10 @@ package Playtomic
 
 	public final class PlayerScore
 	{
-		public function PlayerScore()  { }
+		public function PlayerScore(username:String="", points:int=0){
+			Name = username;
+			Points = points;
+		}
 		
 		public var Name:String;//REQUIRED
 		public var FBUserId:String;
@@ -74,7 +77,6 @@ package Playtomic
 				str += "\n";
 			}
 			str += " <<CustomData"
-			str += "CustomData: "+CustomData;
 			return str;
 		}
 	}
