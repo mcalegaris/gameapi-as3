@@ -75,10 +75,9 @@
 		//////////////////////////////////////////////////
 		private function testSaveAndList(me:MouseEvent=null):void{//not tested with server side yet.
 			var score:PlayerScore = new PlayerScore(sal_name.text, sal_points.value);
-			score.FBUserId = sal_fbuserid.text;
 			score.CustomData = stringToObject(sal_customdata.text);
 			
-			var salOptions:SaveAndListOptions = new SaveAndListOptions(sal_facebook.selected, sal_allowduplicates.selected, sal_global.selected, sal_highest.selected, sal_mode.value, stringToObject(sal_customfilters.text), sal_perpage.value, stringToArray(sal_friendslist.text));
+			var salOptions:SaveAndListOptions = new SaveAndListOptions(sal_allowduplicates.selected, sal_global.selected, sal_highest.selected, sal_mode.value, stringToObject(sal_customfilters.text), sal_perpage.value);
 			
 			Leaderboards.SaveAndList(score, sal_table.text, saveandlistComplete, salOptions);
 			

@@ -51,7 +51,7 @@ package Playtomic
 			if(options == null)
 				options = new Object();
 			
-			var facebook:Boolean = options.hasOwnProperty("facebook") ? options["facebook"] : false;
+			//var facebook:Boolean = options.hasOwnProperty("facebook") ? options["facebook"] : false;
 			var allowduplicates:Boolean = options.hasOwnProperty("allowduplicates") ? options["allowduplicates"] : false;
 			var global:Boolean = options.hasOwnProperty("global") ? options["global"] : true;
 			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
@@ -59,7 +59,7 @@ package Playtomic
 			var customfilters:Object = options.hasOwnProperty("customfilters") ? options["customfilters"] : {};
 			var page:int = options.hasOwnProperty("page") ? options["page"] : 1;
 			var perpage:int = options.hasOwnProperty("perpage") ? options["perpage"] : 20;
-			var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
+			//var friendslist:Array = options.hasOwnProperty("friendslist") ? options["friendslist"] : new Array();
 			
 			var sendaction:URLLoader = new URLLoader();
 			var handled:Boolean = false;
@@ -128,8 +128,8 @@ package Playtomic
 			postdata["points"] = score.Points.toString();
 			postdata["allowduplicates"] = allowduplicates ? "y" : "n";
 			postdata["auth"] = Encode.MD5(Log.SourceUrl + score.Points.toString());
-			postdata["fb"] = facebook ? "y" : "n";
-			postdata["fbuserid"] = score.FBUserId;
+			//postdata["fb"] = facebook ? "y" : "n";
+			//postdata["fbuserid"] = score.FBUserId;
 			postdata["numfields"] = numfields;
 			
 			//LIST
@@ -137,7 +137,7 @@ package Playtomic
 			postdata["mode"] = mode;
 			postdata["page"] = page;
 			postdata["perpage"] = perpage;
-			postdata["friendslist"] = friendslist.join(",");
+			//postdata["friendslist"] = friendslist.join(",");
 			//postdata["highest"] = _highest ? "y" : "n";
 			postdata["numfilters"] = numfilters;
 			

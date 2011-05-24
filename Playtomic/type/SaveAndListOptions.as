@@ -17,10 +17,10 @@
 		
 		
 		
-		public function SaveAndListOptions(facebook:Boolean=false, allowduplicates:Boolean=false, global:Boolean = true, highest:Boolean = true, mode:String = "MODE.ALL", customfilters:Object = null, perpage:int = 20, friendslist:Array = null){
+		public function SaveAndListOptions(allowduplicates:Boolean=false, global:Boolean = true, highest:Boolean = true, mode:String = "MODE.ALL", customfilters:Object = null, perpage:int = 20){
 			if(mode == "MODE.ALL") mode = MODE.ALL;
 			
-			this.facebook=facebook;
+			//this.facebook=facebook;
 			this.allowduplicates=allowduplicates
 			this.global=global;
 			this.highest=highest;
@@ -28,7 +28,7 @@
 			this.customfilters=customfilters;
 			//this.page=page;
 			this.perpage=perpage;
-			this.friendslist=friendslist;
+			//this.friendslist=friendslist;
 		}
 		public function toString():String{
 			var str:String = "::PlayerScore::\n";
