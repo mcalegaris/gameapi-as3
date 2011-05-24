@@ -94,27 +94,27 @@ package Playtomic
 			}
 			
 			var postdata:URLVariables = new URLVariables();			
-			var numcustomfilters:int = 0;
+			var numfilters:int = 0;
 			
 			if(customfilters != null)
 			{
 				for(var fkey:String in customfilters)
 				{
-					postdata["ckey" + numcustomfilters] = fkey;
-					postdata["cdata" + numcustomfilters] = escape(customfilters[fkey]);
-					numcustomfilters++;
+					postdata["ckey" + numfilters] = fkey;
+					postdata["cdata" + numfilters] = escape(customfilters[fkey]);
+					numfilters++;
 				}
 			}
 			
-			var numcustomfields:int = 0;
+			var numfields:int = 0;
 			
 			if(score.CustomData != null)//CustomData from PlayerScore.as
 			{
 				for(var dkey:String in score.CustomData)
 				{
-					postdata["ckey" + numcustomfields] = dkey;
-					postdata["cdata" + numcustomfields] = escape(score.CustomData[dkey]);
-					numcustomfields++;
+					postdata["ckey" + numfields] = dkey;
+					postdata["cdata" + numfields] = escape(score.CustomData[dkey]);
+					numfields++;
 				}
 			}
 						
@@ -130,7 +130,7 @@ package Playtomic
 			postdata["auth"] = Encode.MD5(Log.SourceUrl + score.Points.toString());
 			postdata["fb"] = facebook ? "y" : "n";
 			postdata["fbuserid"] = score.FBUserId;
-			postdata["customfields"] = numcustomfields;
+			postdata["numfields"] = numfields;
 			
 			//LIST
 			postdata["global"] = global ? "y" : "n";
@@ -139,7 +139,7 @@ package Playtomic
 			postdata["perpage"] = perpage;
 			postdata["friendslist"] = friendslist.join(",");
 			//postdata["highest"] = _highest ? "y" : "n";
-			postdata["customfilters"] = numcustomfilters;
+			postdata["numfilters"] = numfilters;
 			
 						
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
@@ -197,15 +197,15 @@ package Playtomic
 			}
 			
 			var postdata:URLVariables = new URLVariables();			
-			var numcustomfilters:int = 0;
+			var numfilters:int = 0;
 			
 			if(customfilters != null)
 			{
 				for(var key:String in customfilters)
 				{
-					postdata["ckey" + numcustomfilters] = key;
-					postdata["cdata" + numcustomfilters] = escape(customfilters[key]);
-					numcustomfilters++;
+					postdata["ckey" + numfilters] = key;
+					postdata["cdata" + numfilters] = escape(customfilters[key]);
+					numfilters++;
 				}
 			}
 			
@@ -214,7 +214,7 @@ package Playtomic
 			postdata["page"] = page;
 			postdata["perpage"] = perpage;
 			postdata["highest"] = highest ? "y" : "n";
-			postdata["customfilters"] = numcustomfilters;
+			postdata["customfilters"] = numfilters;
 			
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
@@ -274,15 +274,15 @@ package Playtomic
 			var postdata:URLVariables = new URLVariables();
 			postdata["friendslist"] = friendslist.join(",");
 			
-			var numcustomfilters:int = 0;
+			var numfilters:int = 0;
 			
 			if(customfilters != null)
 			{
 				for(var key:String in customfilters)
 				{
-					postdata["ckey" + numcustomfilters] = key;
-					postdata["cdata" + numcustomfilters] = escape(customfilters[key]);
-					numcustomfilters++;
+					postdata["ckey" + numfilters] = key;
+					postdata["cdata" + numfilters] = escape(customfilters[key]);
+					numfilters++;
 				}
 			}
 			
@@ -293,7 +293,7 @@ package Playtomic
 			postdata["perpage"] = perpage;
 			postdata["friendslist"] = friendslist.join(",");
 			postdata["highest"] = highest ? "y" : "n";
-			postdata["customfilters"] = numcustomfilters;
+			postdata["customfilters"] = numfilters;
 			
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
