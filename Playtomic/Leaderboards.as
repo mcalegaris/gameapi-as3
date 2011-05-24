@@ -98,10 +98,10 @@ package Playtomic
 			
 			if(customfilters != null)
 			{
-				for(var key:String in customfilters)
+				for(var fkey:String in customfilters)
 				{
-					postdata["ckey" + numcustomfilters] = key;
-					postdata["cdata" + numcustomfilters] = escape(customfilters[key]);
+					postdata["ckey" + numcustomfilters] = fkey;
+					postdata["cdata" + numcustomfilters] = escape(customfilters[fkey]);
 					numcustomfilters++;
 				}
 			}
@@ -110,36 +110,37 @@ package Playtomic
 			
 			if(score.CustomData != null)//CustomData from PlayerScore.as
 			{
-				for(var key:String in score.CustomData)
+				for(var dkey:String in score.CustomData)
 				{
-					postdata["ckey" + numcustomfields] = key;
-					postdata["cdata" + numcustomfields] = escape(score.CustomData[key]);
+					postdata["ckey" + numcustomfields] = dkey;
+					postdata["cdata" + numcustomfields] = escape(score.CustomData[dkey]);
 					numcustomfields++;
 				}
 			}
 						
 			
 			//SAVE
+			postdata["url"] = (global || Log.SourceUrl == null ? "global" : Log.SourceUrl)
 			postdata["table"] = escape(table);
-			postdata["highest"] = _highest ? "y" : "n";
+			postdata["highest"] = highest ? "y" : "n";
 			postdata["name"] = escape(score.Name);
 			postdata["points"] = score.Points.toString();
-			postdata["allowduplicates"] = _allowduplicates ? "y" : "n";
+			postdata["allowduplicates"] = allowduplicates ? "y" : "n";
 			postdata["auth"] = Encode.MD5(Log.SourceUrl + score.Points.toString());
-			postdata["fb"] = _facebook ? "y" : "n";
+			postdata["fb"] = facebook ? "y" : "n";
 			postdata["fbuserid"] = score.FBUserId;
 			postdata["customfields"] = numcustomfields;
 			
 			//LIST
-			postdata["mode"] = _mode;
-			postdata["page"] = _page;
-			postdata["perpage"] = _perpage;
-			postdata["friendslist"] = _friendslist.join(",");
+			postdata["mode"] = mode;
+			postdata["page"] = page;
+			postdata["perpage"] = perpage;
+			postdata["friendslist"] = friendslist.join(",");
 			//postdata["highest"] = _highest ? "y" : "n";
 			postdata["customfilters"] = numcustomfilters;
 			
 						
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;			
 			
@@ -206,18 +207,14 @@ package Playtomic
 				}
 			}
 			
-			/*
-			postdata["mode"] = _mode;
-			postdata["page"] = _page;
-			postdata["perpage"] = _perpage;
-			postdata["highest"] = _highest ? "y" : "n";
+			postdata["url"] = (global || Log.SourceUrl == null ? "global" : Log.SourceUrl);
+			postdata["mode"] = mode;
+			postdata["page"] = page;
+			postdata["perpage"] = perpage;
+			postdata["highest"] = highest ? "y" : "n";
 			postdata["customfilters"] = numcustomfilters;
-			*/
 			
-			//will be swiching to using postdata more, once Vx/list.aspx is ready.
-			//var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/list.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
-			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/list.aspx?swfid=" + Log.SWFID + "&table=" + table + "&mode=" + mode + "&filters=" + numcustomfilters + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&highest=" + (highest ? "y" : "n") + "&page=" + page + "&perpage=" + perpage + "&" + Math.random());
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;			
 			
@@ -287,19 +284,16 @@ package Playtomic
 				}
 			}
 			
-			/*
-			postdata["mode"] = _mode;
-			postdata["page"] = _page;
-			postdata["perpage"] = _perpage;
-			postdata["friendslist"] = _friendslist.join(",");
-			postdata["highest"] = _highest ? "y" : "n";
+			
+			postdata["url"] = (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) 
+			postdata["mode"] = mode;
+			postdata["page"] = page;
+			postdata["perpage"] = perpage;
+			postdata["friendslist"] = friendslist.join(",");
+			postdata["highest"] = highest ? "y" : "n";
 			postdata["customfilters"] = numcustomfilters;
-			*/
 			
-			//will be swiching to using postdata more, once Vx/list.aspx is ready.
-			//var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
-			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&table=" + table + "&mode=" + mode + "&filters=" + numcustomfilters + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&highest=" + (highest ? "y" : "n") + "&page=" + page + "&perpage=" + perpage + "&" + Math.random());
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
 
@@ -380,6 +374,7 @@ package Playtomic
 				}
 			}
 			
+			postdata["url"] = Log.SourceUrl;
 			postdata["table"] = escape(table);
 			postdata["highest"] = highest ? "y" : "n";
 			postdata["name"] = escape(score.Name);
@@ -391,8 +386,8 @@ package Playtomic
 			postdata["customfields"] = customfields;
 			
 			trace("POSTDATA: "+postdata.toString());
-
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID + ".api.playtomic.com/leaderboards/save.aspx?swfid=" + Log.SWFID + "&url=" + Log.SourceUrl + "&r=" + Math.random());
+			
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/save.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
 
@@ -408,6 +403,7 @@ package Playtomic
 			var status:int = parseInt(data["status"]);
 			var errorcode:int = parseInt(data["errorcode"]);
 			var numscores:int = parseInt(data["numscores"]);
+			
 			var results:Array = new Array();
 			
 			if(status == 1)
@@ -431,6 +427,7 @@ package Playtomic
 					score.Name = item["name"];
 					score.Points = item["points"];
 					score.Website = item["website"];
+					score.Rank = item["rank"];
 					
 					if(item["fbuserid"])
 						score.FBUserId = item["fbuserid"];

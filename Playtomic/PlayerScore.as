@@ -45,10 +45,12 @@ package Playtomic
 		public var Name:String;//REQUIRED
 		public var FBUserId:String;
 		public var Points:Number;//REQUIRED
+		public var Rank:int;
 		public var Website:String;
 		public var SDate:Date;
 		public var RDate:String;
 		public var CustomData:Object = {};
+		
 		
 		public function toString():String{
 			var str:String = "::PlayerScore::\n";
@@ -64,6 +66,8 @@ package Playtomic
 			str += " FBUserId: "+FBUserId;
 			str += "\n";
 			str += " Points: "+Points;
+			str += "\n";
+			str += " Rank: "+Rank;
 			str += "\n";
 			str += " Website: "+Website;
 			str += "\n";
