@@ -105,6 +105,39 @@ package Playtomic
 					numcustomfilters++;
 				}
 			}
+			
+			var numcustomfields:int = 0;
+			
+			if(score.CustomData != null)//CustomData from PlayerScore.as
+			{
+				for(var key:String in score.CustomData)
+				{
+					postdata["ckey" + numcustomfields] = key;
+					postdata["cdata" + numcustomfields] = escape(score.CustomData[key]);
+					numcustomfields++;
+				}
+			}
+						
+			
+			//SAVE
+			postdata["table"] = escape(table);
+			postdata["highest"] = _highest ? "y" : "n";
+			postdata["name"] = escape(score.Name);
+			postdata["points"] = score.Points.toString();
+			postdata["allowduplicates"] = _allowduplicates ? "y" : "n";
+			postdata["auth"] = Encode.MD5(Log.SourceUrl + score.Points.toString());
+			postdata["fb"] = _facebook ? "y" : "n";
+			postdata["fbuserid"] = score.FBUserId;
+			postdata["customfields"] = numcustomfields;
+			
+			//LIST
+			postdata["mode"] = _mode;
+			postdata["page"] = _page;
+			postdata["perpage"] = _perpage;
+			postdata["friendslist"] = _friendslist.join(",");
+			//postdata["highest"] = _highest ? "y" : "n";
+			postdata["customfilters"] = numcustomfilters;
+			
 						
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
 			request.data = postdata;
@@ -172,6 +205,14 @@ package Playtomic
 					numcustomfilters++;
 				}
 			}
+			
+			/*
+			postdata["mode"] = _mode;
+			postdata["page"] = _page;
+			postdata["perpage"] = _perpage;
+			postdata["highest"] = _highest ? "y" : "n";
+			postdata["customfilters"] = numcustomfilters;
+			*/
 			
 			//will be swiching to using postdata more, once Vx/list.aspx is ready.
 			//var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/list.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
@@ -246,6 +287,15 @@ package Playtomic
 				}
 			}
 			
+			/*
+			postdata["mode"] = _mode;
+			postdata["page"] = _page;
+			postdata["perpage"] = _perpage;
+			postdata["friendslist"] = _friendslist.join(",");
+			postdata["highest"] = _highest ? "y" : "n";
+			postdata["customfilters"] = numcustomfilters;
+			*/
+			
 			//will be swiching to using postdata more, once Vx/list.aspx is ready.
 			//var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&url=" + (global || Log.SourceUrl == null ? "global" : Log.SourceUrl) + "&r=" + Math.random());
 			
@@ -316,14 +366,7 @@ package Playtomic
 				s = s.substring(0, s.indexOf("."));
 			
 			var postdata:URLVariables = new URLVariables();
-			postdata["table"] = escape(table);
-			postdata["highest"] = highest ? "y" : "n";
-			postdata["name"] = escape(score.Name);
-			postdata["points"] = s;
-			postdata["allowduplicates"] = allowduplicates ? "y" : "n";
-			postdata["auth"] = Encode.MD5(Log.SourceUrl + s);
-			postdata["fb"] = facebook ? "y" : "n";
-			postdata["fbuserid"] = score.FBUserId;
+			
 			
 			var customfields:int = 0;
 			
@@ -336,7 +379,15 @@ package Playtomic
 					customfields++;
 				}
 			}
-						
+			
+			postdata["table"] = escape(table);
+			postdata["highest"] = highest ? "y" : "n";
+			postdata["name"] = escape(score.Name);
+			postdata["points"] = s;
+			postdata["allowduplicates"] = allowduplicates ? "y" : "n";
+			postdata["auth"] = Encode.MD5(Log.SourceUrl + s);
+			postdata["fb"] = facebook ? "y" : "n";
+			postdata["fbuserid"] = score.FBUserId;
 			postdata["customfields"] = customfields;
 			
 			trace("POSTDATA: "+postdata.toString());
