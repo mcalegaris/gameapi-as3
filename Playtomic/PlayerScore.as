@@ -54,6 +54,8 @@ package Playtomic
 		
 		public function toString():String{
 			var str:String = "::PlayerScore::\n";
+			str += " Rank: "+Rank;
+			str += "\n";
 			str += " Name: "+Name;
 			str += "\n";
 			str += " Points: "+Points;

@@ -113,6 +113,7 @@
 					var score:PlayerScore = scores[i];
 					lsScores[i].text = score.Points;
 					lsNames[i].text = score.Name;
+					trace("Rank: "+score.Rank);
 				}else{
 					lsRanks[i].text = "";
 					lsScores[i].text = "";

@@ -30,6 +30,8 @@
 			listBtn.addEventListener(MouseEvent.CLICK, testList);
 			listfbBtn.addEventListener(MouseEvent.CLICK, testListFB);
 			salBtn.addEventListener(MouseEvent.CLICK, testSaveAndList);
+			
+			list_mode.selectedIndex = 3;
 		}
 		//////////////////////////////////////////////////
 		private function testSave(me:MouseEvent=null):void{
@@ -50,6 +52,7 @@
 		}
 		//////////////////////////////////////////////////
 		private function testList(me:MouseEvent=null):void{
+			trace("list_perpage.value: "+list_perpage.value);
 			var listOptions:ListOptions = new ListOptions(list_global.selected, list_highest.selected, list_mode.value, stringToObject(list_customfilters.text), list_page.value, list_perpage.value);
 			Leaderboards.List(list_table.text, listComplete, listOptions);
 			trace("test list");

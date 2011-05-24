@@ -120,7 +120,8 @@ package Playtomic
 						
 			
 			//SAVE
-			postdata["url"] = (global || Log.SourceUrl == null ? "global" : Log.SourceUrl)
+			
+			postdata["url"] = Log.SourceUrl;
 			postdata["table"] = escape(table);
 			postdata["highest"] = highest ? "y" : "n";
 			postdata["name"] = escape(score.Name);
@@ -132,6 +133,7 @@ package Playtomic
 			postdata["customfields"] = numcustomfields;
 			
 			//LIST
+			postdata["global"] = global ? "y" : "n";
 			postdata["mode"] = mode;
 			postdata["page"] = page;
 			postdata["perpage"] = perpage;
