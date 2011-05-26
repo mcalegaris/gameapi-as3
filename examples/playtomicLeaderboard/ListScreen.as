@@ -5,8 +5,14 @@
 	import flash.events.MouseEvent;
 	import Playtomic.type.MODE;
 	import flash.events.Event;
+	import Playtomic.type.Response;
+	import Playtomic.type.ListOptions;
 	
 	public class ListScreen extends screen{
+		
+		private static var self:ListScreen;
+		
+		private var table:String = "highscores";
 		
 		private var lsRanks:Array = new Array;
 		private var lsScores:Array = new Array;
@@ -27,8 +33,29 @@
 			Modes[val].Selected=true;
 			_Mode = val;
 		}
+		public static function Clear():void{
+			self.listScores([]);
+		}
+		public static function MyBoardList(table:String=null):void{
+			self.List(table, "alltime");
+		}
+		public static function SaveAndListCallback(scores:Array, numscores:int, response:Response):void{
+			self.Show();
+			trace(response);
+			
+			self.updatePageBtns(numscores);
+			self.listScores(scores);
+		}
+		public function ListCallback(scores:Array, numscores:int, response:Response):void{
+			trace(response);
+			
+			updatePageBtns(numscores);
+			listScores(scores);
+		}
 		
 		public function ListScreen(){
+			self=this;
+			
 			visible=false;
 			
 			//for tweens.
@@ -44,9 +71,9 @@
 			week.action = weekClick;
 			day.action = dayClick;
 			newest.action = newestClick;
-			//friends.action = friendsClick;
+			myboard.action = myboardClick;
 			
-			Modes = {alltime:alltime, last30days:month, last7days:week, today:day, newest:newest};//, friends:friends};
+			Modes = {alltime:alltime, last30days:month, last7days:week, today:day, newest:newest, myboard:myboard};//, friends:friends};
 			
 			//find and sort text fields.
 			for(var n:int = 0; n<10; n++){
@@ -67,7 +94,7 @@
 		private function pageDown():void{changePage(-1)}
 		private function changePage(dir:int = 1):void{
 			page += dir;
-			dispatchEvent(new Event("REQUEST"));
+			List(table, selectedMode);
 		}
 		
 		private function alltimeClick(me:MouseEvent=null):void{changeMode(MODE.ALL)}
@@ -75,14 +102,23 @@
 		private function weekClick(me:MouseEvent=null):void{changeMode(MODE.WEEK)}
 		private function dayClick(me:MouseEvent=null):void{changeMode(MODE.DAY)}
 		private function newestClick(me:MouseEvent=null):void{changeMode(MODE.NEWEST)}
-		//private function friendsClick(me:MouseEvent=null):void{changeMode("friends")}
+		private function myboardClick(me:MouseEvent=null):void{
+			changeMode("myboard");
+			myboardgui.Show();
+		}
+		
+		private function List(_table:String, _mode:String):void{
+			var lo:ListOptions = new ListOptions();
+			lo.mode = _mode;
+			Leaderboards.List(_table, ListCallback, lo);
+		}
 		
 		private function changeMode(modeName:String):void{
 			if(!isShown)return;
 			
 			selectedMode = modeName;
 			page = 1;
-			dispatchEvent(new Event("REQUEST"));
+			List(table, selectedMode);
 			
 			soDATA.saveSO();
 		}
@@ -92,11 +128,8 @@
 			Modes[selectedMode].mClick();
 		}
 		public override function Hide():void{
-			OUT.onComplete = quit;
+			OUT.onComplete = main.quit;
 			super.Hide();
-		}
-		private function quit():void{
-			dispatchEvent(new Event("QUIT"));
 		}
 		
 		public function updatePageBtns(numscores:int):void{

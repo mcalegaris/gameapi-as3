@@ -4,12 +4,14 @@
 	
 	public class soDATA{
 		
-		private static var so:SharedObject = SharedObject.getLocal( "rosedragoness/sketchbookgames/PLB", "/" );//all Leaderboards
+		private static var so:SharedObject = SharedObject.getLocal( "playtomic/example/leaderboard", "/" );//all Leaderboards
 		
 		public static var loadSendScreen:Function;
 		public static var saveSendScreen:Function;
 		public static var loadListScreen:Function;
 		public static var saveListScreen:Function;
+		
+		public static var myboardIDs:Array = new Array();
 		
 		public static function clearSO():void{
 			so.clear();
@@ -22,10 +24,14 @@
 				loadSendScreen( so.data.Send );
 				loadListScreen( so.data.List );
 			}
+			if(so.data && so.data.myboardID){
+				myboardIDs = so.data.myboardIDs;
+			}
 		}
 		public static function saveSO():void{
 			so.data.Send = saveSendScreen();
 			so.data.List = saveListScreen();
+			so.data.myboardIDs = myboardIDs;
 			so.flush(); 
 		}
 	}

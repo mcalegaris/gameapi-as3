@@ -10,12 +10,30 @@
 		
 		private var busy:Boolean = false;
 		
+		private static var self:SendScreen;
+		
 		public function SendScreen():void{
+			self=this;
+			
 			START.y += 480
 			OUT.y += -480;
 			
 			soDATA.saveSendScreen = saveSendScreen;
 			soDATA.loadSendScreen = loadSendScreen;
+			
+			sendBtn.action = Save;
+		}
+		
+		public static function SaveToTable(table:String){
+			var ps:PlayerScore = new PlayerScore(self.userName.text, int(self.score.text));
+			Leaderboards.SaveAndList(ps, table, ListScreen.SaveAndListCallback);
+		}
+		
+		public function Save():void{
+			var score:PlayerScore = new PlayerScore(userName.text, int(score.text));
+			Leaderboards.SaveAndList(score, "highscores", ListScreen.SaveAndListCallback);
+			
+			Hide();
 		}
 		
 		private function saveSendScreen():Object{
@@ -28,7 +46,7 @@
 		}
 		
 		public override function Show():void{
-			sendBtn.action = sendScore;
+			sendBtn.action = Save;
 			closeBtn.action = Quit;
 			userName.text = "guest"
 			
@@ -42,15 +60,8 @@
 		}
 		
 		private function Quit():void{
-			OUT.onComplete = quit;
+			OUT.onComplete = main.quit;
 			super.Hide();
-		}
-		private function quit():void{
-			dispatchEvent(new Event("QUIT"));
-		}
-		
-		private function sendScore(me:MouseEvent=null):void{
-			dispatchEvent(new Event("REQUEST"));
 		}
 	}
 }

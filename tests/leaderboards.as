@@ -9,11 +9,13 @@
 	import Playtomic.type.SaveOptions;
 	import Playtomic.type.ListOptions;
 	import Playtomic.type.SaveAndListOptions;
+	import Playtomic.type.cplResponse;
 	
 	import Playtomic.PlayerScore;
 	import Playtomic.Log;
 	
 	import Playtomic.Leaderboards;
+	
 	
 
 //only imported for testing LEGACY
@@ -29,18 +31,46 @@
 			listBtn.addEventListener(MouseEvent.CLICK, testList);
 			salBtn.addEventListener(MouseEvent.CLICK, testSaveAndList);
 			
-			list_mode.selectedIndex = 3;
+			cplBtn.addEventListener(MouseEvent.CLICK, testCreatePrivateLeaderboard);
+			lplBtn.addEventListener(MouseEvent.CLICK, testLoadPrivateLeaderboard);
+			gplBtn.addEventListener(MouseEvent.CLICK, testGetPrivateLeaderboardFromUrl);
+			
+			cb_mode.selectedIndex = 3;
 		}
+		
+		private function testCreatePrivateLeaderboard(me:MouseEvent=null):void{
+			trace("start create");
+			Leaderboards.CreatePrivateLeaderboard(txt_TableAlias.text, txt_Permalink.text, onCreatePrivateLeaderboard);
+		}
+		private function onCreatePrivateLeaderboard(dat:cplResponse, response:Response){
+			trace("end create");
+			trace(dat);
+			trace(response);
+		}
+		private function testLoadPrivateLeaderboard(me:MouseEvent=null):void{
+			trace("start load");
+			Leaderboards.LoadPrivateLeaderboard(txt_TableID.text, onLoadPrivateLeaderboard);
+		}
+		private function onLoadPrivateLeaderboard(dat:cplResponse, response:Response){
+			trace("end load");
+			trace(dat);
+			trace(response);
+		}
+		private function testGetPrivateLeaderboardFromUrl(me:MouseEvent=null):void{
+			trace("boardID: "+Leaderboards.GetLeaderboardFromUrl(txt_URL.text) );
+		}
+		
+		
 		//////////////////////////////////////////////////
 		private function testSave(me:MouseEvent=null):void{
 			trace(":::testSave init");
-			var score:PlayerScore = new PlayerScore(save_name.text, save_points.value);
-			score.FBUserId = save_fbuserid.text;
-			score.CustomData = stringToObject(save_customdata.text);
+			var score:PlayerScore = new PlayerScore(txt_name.text, num_points.value);
+			score.FBUserId = txt_fbuserid.text;
+			score.CustomData = stringToObject(txt_customdata.text);
 			
-			var saveOptions:SaveOptions = new SaveOptions(save_facebook.selected, save_highest.selected, save_allowduplicates.selected);
+			var saveOptions:SaveOptions = new SaveOptions(chk_highest.selected, chk_allowduplicates.selected);
 			
-			Leaderboards.Save(score, save_table.text, saveComplete, saveOptions);
+			Leaderboards.Save(score, txt_table.text, saveComplete, saveOptions);
 			trace(":::testSave sent");
 		}
 		private function saveComplete(score:PlayerScore, response:Object):void{
@@ -50,9 +80,8 @@
 		}
 		//////////////////////////////////////////////////
 		private function testList(me:MouseEvent=null):void{
-			trace("list_perpage.value: "+list_perpage.value);
-			var listOptions:ListOptions = new ListOptions(list_global.selected, list_highest.selected, list_mode.value, stringToObject(list_customfilters.text), list_page.value, list_perpage.value, list_facebook.selected, stringToArray(list_friendslist.text));
-			Leaderboards.List(list_table.text, listComplete, listOptions);
+			var listOptions:ListOptions = new ListOptions(chk_global.selected, chk_highest.selected, cb_mode.value, stringToObject(txt_customfilters.text), num_page.value, num_perpage.value, chk_facebook.selected, stringToArray(txt_friendslist.text));
+			Leaderboards.List(txt_table.text, listComplete, listOptions);
 			trace("test list");
 		}
 		private function listComplete(scores:Array, numscores:int, response:Object):void{
@@ -62,12 +91,14 @@
 		}
 		//////////////////////////////////////////////////
 		private function testSaveAndList(me:MouseEvent=null):void{//not tested with server side yet.
-			var score:PlayerScore = new PlayerScore(sal_name.text, sal_points.value);
-			score.CustomData = stringToObject(sal_customdata.text);
+			var score:PlayerScore = new PlayerScore(txt_name.text, num_points.value);
+			score.CustomData = stringToObject(txt_customdata.text);
+			score.FBUserId = txt_fbuserid.text;
 			
-			var salOptions:SaveAndListOptions = new SaveAndListOptions(sal_allowduplicates.selected, sal_global.selected, sal_highest.selected, sal_mode.value, stringToObject(sal_customfilters.text), sal_perpage.value, sal_facebook.selected, stringToArray(sal_friendslist.text));
-			
-			Leaderboards.SaveAndList(score, sal_table.text, saveandlistComplete, salOptions);
+			trace("txt_fbuserid.text: "+txt_fbuserid.text);
+			var salOptions:SaveAndListOptions = new SaveAndListOptions(chk_allowduplicates.selected, chk_global.selected, chk_highest.selected, cb_mode.value, stringToObject(txt_customfilters.text), num_perpage.value, stringToArray(txt_friendslist.text));
+			trace("txt_table.text: "+txt_table.text);
+			Leaderboards.SaveAndList(score, txt_table.text, saveandlistComplete, salOptions);
 			
 		}
 		

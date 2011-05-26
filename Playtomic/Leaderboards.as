@@ -40,11 +40,161 @@ package Playtomic
 	import flash.net.URLLoader;
 	import flash.net.URLVariables;
 	import flash.net.URLRequestMethod;
+	import flash.external.ExternalInterface;
 	import Playtomic.type.Response;
-
+	import Playtomic.type.cplResponse;
+	
 	public class Leaderboards
 	{
-		//, score:PlayerScore, rank:int (should eventually be in the callback)
+		
+		//used for MyBoard
+		//permalink is like this "http://sponsorwebsite.com/my_game_url?leaderboard="
+		//callback signature: callback(cplResponse:Object, response:Response):void
+		public static function CreatePrivateLeaderboard(table:String, permalink:String, callback:Function = null, highest:Boolean=true):void{
+			var sendaction:URLLoader = new URLLoader();
+			var handled:Boolean = false;
+
+			if(callback != null)
+			{
+				var bridge:Function = function():void
+				{	
+					if(callback == null || handled)
+						return;
+						
+					handled = true;
+					
+					trace("fullResponseA: "+sendaction["data"]);
+					
+					var data:XML = XML(sendaction["data"]);
+					var status:int = parseInt(data["status"]);
+					var errorcode:int = parseInt(data["errorcode"]);
+					
+					var responseData:cplResponse = new cplResponse(data["tableid"], table, data["Bitly"], data["Permalink"], data["Highest"] == "true" ? true : false, data["RealName"]);
+					callback(responseData, new Response(status == 1,  errorcode));
+				}
+
+				sendaction.addEventListener(Event.COMPLETE, bridge);
+			}
+
+			var fail:Function = function():void{
+				if(callback == null || handled)
+					return;
+					
+				handled = true;
+				
+				trace("fullResponseB: "+sendaction["data"]);
+					
+				callback(null, new Response(false,  1));
+			}
+			
+			var httpstatusignore:Function = function():void{}
+			
+			var postdata:URLVariables = new URLVariables();
+			
+			postdata["table"] = table;
+			postdata["highest"] = highest ? "y" : "n";
+			postdata["permalink"] = permalink;
+			
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/create.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			
+			request.data = postdata;
+			request.method = URLRequestMethod.POST;	
+			
+			trace("request: "+request.url);
+			
+			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
+			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
+			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
+			sendaction.load(request);
+		}
+		public static function LoadPrivateLeaderboard(tableid:String, callback:Function=null):void{
+			var sendaction:URLLoader = new URLLoader();
+			var handled:Boolean = false;
+
+			if(callback != null)
+			{
+				var bridge:Function = function():void
+				{	
+					if(callback == null || handled)
+						return;
+						
+					handled = true;
+					
+					var data:XML = XML(sendaction["data"]);
+					var status:int = parseInt(data["status"]);
+					var errorcode:int = parseInt(data["errorcode"]);
+					
+					var responseData:cplResponse = new cplResponse(tableid, data["Name"], data["Bitly"], data["Permalink"], data["Highest"] == "true" ? true : false, data["RealName"]);
+					callback(responseData, new Response(status == 1,  errorcode));
+				}
+
+				sendaction.addEventListener(Event.COMPLETE, bridge);
+			}
+
+			var fail:Function = function():void{
+				if(callback == null || handled)
+					return;
+					
+				handled = true;
+					
+				callback(null, new Response(false,  1));
+			}
+			
+			var httpstatusignore:Function = function():void{}
+			
+			var postdata:URLVariables = new URLVariables();
+			postdata["tableid"] = tableid;
+			
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/load.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			
+			request.data = postdata;
+			request.method = URLRequestMethod.POST;			
+			
+			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
+			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
+			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
+			sendaction.load(request);
+		}
+		//used for MyBoard
+		public static function GetLeaderboardFromUrl(debugUrl:String=null):String{
+			if(ExternalInterface.available)
+			{
+				
+				trace("GetPrivateLeaderboard");
+				try
+				{
+					var url:String = String(ExternalInterface.call("window.location.href.toString"));
+					if(debugUrl!=null) url = debugUrl;
+					//url = "http://www.url.com/mygame?leaderboard=4c5adf66cf1e8c13b800002b";
+					//trace(url);
+					
+					if(url.indexOf("?") > -1)
+					{
+						var leaderboardid:String = url.substring(url.indexOf("leaderboard=") + 12);
+						
+						if(leaderboardid.indexOf("&") > -1)
+						{
+							leaderboardid = leaderboardid.substring(0, leaderboardid.indexOf("&"))
+						}
+
+						if(leaderboardid.indexOf("#") > -1)
+						{
+							leaderboardid = leaderboardid.substring(0, leaderboardid.indexOf("#"))
+						}
+
+						return leaderboardid;
+						//store this id in sharedObject
+						//set table to this id when they are viewing MyBoard
+
+					}
+				}
+				catch(s:Error)
+				{
+				}
+			}
+			return null;
+		}
+		
 		//callback signature: callback(scores:Array, numscores:int, response:Response):void
 		public static function SaveAndList(score:PlayerScore, table:String, callback:Function = null, options:Object=null):void
 		{
@@ -71,6 +221,7 @@ package Playtomic
 						return;
 						
 					handled = true;
+					trace("fullResponseC: "+sendaction["data"]);
 					ProcessScores(sendaction, callback);
 				}
 
@@ -83,7 +234,7 @@ package Playtomic
 					return;
 					
 				handled = true;
-					
+				trace("fullResponseD: "+sendaction["data"]);
 				callback([], 0, new Response(false,  1));
 			}
 			
@@ -116,7 +267,7 @@ package Playtomic
 					numfields++;
 				}
 			}
-						
+			
 			//SAVE
 			postdata["url"] = Log.SourceUrl;
 			postdata["table"] = escape(table);
@@ -134,19 +285,22 @@ package Playtomic
 			postdata["perpage"] = perpage;
 			postdata["numfilters"] = numfilters;
 			
+			trace("table: "+table);
+			trace('postdata["table"]: '+postdata["table"]);
 			
 			var request:URLRequest
-			
-			if(score.FBUserId != ""){
+			if(score.FBUserId != "" && score.FBUserId != null){
 				if(friendslist.length>0){
 					postdata["friendslist"] = friendslist.join(",");
 				}
 				postdata["fbuserid"] = score.FBUserId;
-				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlistfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/saveandlistfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}else{
-				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}
-						
+			trace("request: "+request.url);
+			
+			trace("postdata: "+postdata);
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;			
