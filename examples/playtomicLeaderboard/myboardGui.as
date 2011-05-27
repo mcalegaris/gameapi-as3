@@ -57,7 +57,7 @@
 		private function removeBoard():void{
 			var boardID:String = createPrompt.txt.text;
 			
-			soDATA.myboardIDs.split( findBoard(boardID) ,1);
+			soDATA.myboardIDs.splice( findBoard(boardID) ,1);
 			soDATA.saveSO();
 		}
 		private function findBoard(boardID:String):int{
@@ -74,24 +74,41 @@
 		private function requestBoardNameById(id:String):void{
 			Leaderboards.LoadPrivateLeaderboard(id, onBoardNameById);
 		}
-		private function onBoardNameById(dat:PrivateBoard, response:Response):void{
+		private function onBoardNameById(pb:PrivateBoard, response:Response):void{
+			trace("dat: "+pb);
 			
+			if(response.Success){
+				//store Loaded PrivateBoard
+				soDATA.myboardIDs.unshift(pb);
+				soDATA.saveSO();
+				mbLink.text = pb.Bitly;
+				updateMyBoardList();
+			}
 		}
 		
 		
-		private function MyBoardCreated(dat:PrivateBoard, response:Response){
-			//recieved unique id.
+		private function MyBoardCreated(pb:PrivateBoard, response:Response){
+			trace("dat: "+pb);
+			
 			if(response.Success){
-				soDATA.myboardIDs.push(dat.TableId);
+				//store Created PrivateBoard
+				soDATA.myboardIDs.unshift(pb);
 				soDATA.saveSO();
-				trace("dat: "+dat);
-				mbLink.text = dat.Bitly;
+				mbLink.text = pb.Bitly;
+				updateMyBoardList();
+				
+				//save to your new board.
+				SendScreen.SaveToTable(pb.RealName);
 			}
-			
-			SendScreen.SaveToTable(dat.RealName);
-			
-			//post id returns boardname.
-			//SaveAndList to MyBoard.
+		}
+		
+		private function updateMyBoardList():void{
+			cb.removeAll();
+			var count:int = soDATA.myboardIDs.length;
+			for(var n:int = 0; n<count; n++){
+				cb.addItem(soDATA.myboardIDs);
+				soDATA.myboardIDs
+			}
 		}
 		
 	}

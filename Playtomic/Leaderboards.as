@@ -63,8 +63,6 @@ package Playtomic
 						
 					handled = true;
 					
-					trace("fullResponseA: "+sendaction["data"]);
-					
 					var data:XML = XML(sendaction["data"]);
 					var status:int = parseInt(data["status"]);
 					var errorcode:int = parseInt(data["errorcode"]);
@@ -81,8 +79,6 @@ package Playtomic
 					return;
 					
 				handled = true;
-				
-				trace("fullResponseB: "+sendaction["data"]);
 					
 				callback(null, new Response(false,  1));
 			}
@@ -99,8 +95,6 @@ package Playtomic
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;	
-			
-			trace("request: "+request.url);
 			
 			sendaction.addEventListener(IOErrorEvent.IO_ERROR, fail);
 			sendaction.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpstatusignore);
@@ -121,8 +115,6 @@ package Playtomic
 						
 					handled = true;
 					
-					trace("fullResponseLPL1: "+sendaction["data"]);
-					
 					var data:XML = XML(sendaction["data"]);
 					var status:int = parseInt(data["status"]);
 					var errorcode:int = parseInt(data["errorcode"]);
@@ -139,7 +131,6 @@ package Playtomic
 					return;
 					
 				handled = true;
-				trace("fullResponseLPL2: "+sendaction["data"]);
 				callback(null, new Response(false,  1));
 			}
 			
@@ -163,7 +154,6 @@ package Playtomic
 			if(ExternalInterface.available)
 			{
 				
-				trace("GetPrivateLeaderboard");
 				try
 				{
 					var url:String = String(ExternalInterface.call("window.location.href.toString"));
@@ -224,7 +214,6 @@ package Playtomic
 						return;
 						
 					handled = true;
-					trace("fullResponse_SAL1: "+sendaction["data"]);
 					ProcessScores(sendaction, callback);
 				}
 
@@ -237,7 +226,6 @@ package Playtomic
 					return;
 					
 				handled = true;
-				trace("fullResponse_SAL2: "+sendaction["data"]);
 				callback([], 0, new Response(false,  1));
 			}
 			
@@ -288,9 +276,6 @@ package Playtomic
 			postdata["perpage"] = perpage;
 			postdata["numfilters"] = numfilters;
 			
-			trace("table: "+table);
-			trace('postdata["table"]: '+postdata["table"]);
-			
 			var request:URLRequest
 			if(score.FBUserId != "" && score.FBUserId != null){
 				if(friendslist.length>0){
@@ -301,9 +286,6 @@ package Playtomic
 			}else{
 				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}
-			trace("request: "+request.url);
-			
-			trace("postdata: "+postdata);
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;			
@@ -399,8 +381,6 @@ package Playtomic
 			postdata["fbuserid"] = score.FBUserId;
 			postdata["customfields"] = customfields;
 			
-			trace("POSTDATA: "+postdata.toString());
-			
 			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/save.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
@@ -434,7 +414,6 @@ package Playtomic
 				{	
 					if(callback == null || handled)
 						return;
-					trace("fullResponse_L1: "+sendaction["data"]);
 					handled = true;
 					ProcessScores(sendaction, callback);
 				}
@@ -448,7 +427,6 @@ package Playtomic
 					return;
 					
 				handled = true;
-				trace("fullResponse_L2: "+sendaction["data"]);
 				callback([], 0, new Response(false,  1));
 			}
 			
@@ -485,9 +463,6 @@ package Playtomic
 			}else{
 				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}
-			
-			trace("postdata: "+postdata);
-			trace("request: "+request.url);
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
