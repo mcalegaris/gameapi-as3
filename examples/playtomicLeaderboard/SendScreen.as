@@ -30,7 +30,11 @@
 		}
 		
 		public function Save():void{
+			trace("--@Save: "+"alltime");
+			trace("--@Save: "+"highscores");
+			
 			var score:PlayerScore = new PlayerScore(userName.text, int(score.text));
+			trace("score: "+score);
 			Leaderboards.SaveAndList(score, "highscores", ListScreen.SaveAndListCallback);
 			
 			Hide();

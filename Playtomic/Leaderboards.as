@@ -42,14 +42,14 @@ package Playtomic
 	import flash.net.URLRequestMethod;
 	import flash.external.ExternalInterface;
 	import Playtomic.type.Response;
-	import Playtomic.type.cplResponse;
+	import Playtomic.type.PrivateBoard;
 	
 	public class Leaderboards
 	{
 		
 		//used for MyBoard
-		//permalink is like this "http://sponsorwebsite.com/my_game_url?leaderboard="
-		//callback signature: callback(cplResponse:Object, response:Response):void
+		//permalink is like this "http://example.com/my_game_url?leaderboard="
+		//callback signature: callback(PrivateBoard:Object, response:Response):void
 		public static function CreatePrivateLeaderboard(table:String, permalink:String, callback:Function = null, highest:Boolean=true):void{
 			var sendaction:URLLoader = new URLLoader();
 			var handled:Boolean = false;
@@ -69,7 +69,7 @@ package Playtomic
 					var status:int = parseInt(data["status"]);
 					var errorcode:int = parseInt(data["errorcode"]);
 					
-					var responseData:cplResponse = new cplResponse(data["tableid"], table, data["Bitly"], data["Permalink"], data["Highest"] == "true" ? true : false, data["RealName"]);
+					var responseData:PrivateBoard = new PrivateBoard(data["tableid"], table, data["bitly"], data["permalink"], data["highest"] == "true" ? true : false, data["realname"]);
 					callback(responseData, new Response(status == 1,  errorcode));
 				}
 
@@ -107,6 +107,7 @@ package Playtomic
 			sendaction.addEventListener(SecurityErrorEvent.SECURITY_ERROR, fail);
 			sendaction.load(request);
 		}
+		//callback(dat:PrivateBoard, response:Response):void;
 		public static function LoadPrivateLeaderboard(tableid:String, callback:Function=null):void{
 			var sendaction:URLLoader = new URLLoader();
 			var handled:Boolean = false;
@@ -120,11 +121,13 @@ package Playtomic
 						
 					handled = true;
 					
+					trace("fullResponseLPL1: "+sendaction["data"]);
+					
 					var data:XML = XML(sendaction["data"]);
 					var status:int = parseInt(data["status"]);
 					var errorcode:int = parseInt(data["errorcode"]);
 					
-					var responseData:cplResponse = new cplResponse(tableid, data["Name"], data["Bitly"], data["Permalink"], data["Highest"] == "true" ? true : false, data["RealName"]);
+					var responseData:PrivateBoard = new PrivateBoard(tableid, data["name"], data["bitly"], data["permalink"], data["highest"] == "true" ? true : false, data["realname"]);
 					callback(responseData, new Response(status == 1,  errorcode));
 				}
 
@@ -136,7 +139,7 @@ package Playtomic
 					return;
 					
 				handled = true;
-					
+				trace("fullResponseLPL2: "+sendaction["data"]);
 				callback(null, new Response(false,  1));
 			}
 			
@@ -221,7 +224,7 @@ package Playtomic
 						return;
 						
 					handled = true;
-					trace("fullResponseC: "+sendaction["data"]);
+					trace("fullResponse_SAL1: "+sendaction["data"]);
 					ProcessScores(sendaction, callback);
 				}
 
@@ -234,7 +237,7 @@ package Playtomic
 					return;
 					
 				handled = true;
-				trace("fullResponseD: "+sendaction["data"]);
+				trace("fullResponse_SAL2: "+sendaction["data"]);
 				callback([], 0, new Response(false,  1));
 			}
 			
@@ -316,8 +319,7 @@ package Playtomic
 		{
 			if(options == null)
 				options = new Object();
-				
-			var facebook:Boolean = options.hasOwnProperty("facebook") ? options["facebook"] : false;
+			
 			var allowduplicates:Boolean = options.hasOwnProperty("allowduplicates") ? options["allowduplicates"] : false;
 			var highest:Boolean = options.hasOwnProperty("highest") ? options["highest"] : true;
 			var sendaction:URLLoader = new URLLoader();
@@ -389,13 +391,17 @@ package Playtomic
 			postdata["points"] = s;
 			postdata["allowduplicates"] = allowduplicates ? "y" : "n";
 			postdata["auth"] = Encode.MD5(Log.SourceUrl + s);
-			postdata["fb"] = facebook ? "y" : "n";
+			if(score.FBUserId != "" && score.FBUserId != null){
+				postdata["fb"] = "y";
+			}else{
+				postdata["fb"] = "n";
+			}
 			postdata["fbuserid"] = score.FBUserId;
 			postdata["customfields"] = customfields;
 			
 			trace("POSTDATA: "+postdata.toString());
 			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/save.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/save.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
 
@@ -428,7 +434,7 @@ package Playtomic
 				{	
 					if(callback == null || handled)
 						return;
-						
+					trace("fullResponse_L1: "+sendaction["data"]);
 					handled = true;
 					ProcessScores(sendaction, callback);
 				}
@@ -442,7 +448,7 @@ package Playtomic
 					return;
 					
 				handled = true;
-					
+				trace("fullResponse_L2: "+sendaction["data"]);
 				callback([], 0, new Response(false,  1));
 			}
 			
@@ -468,16 +474,20 @@ package Playtomic
 			postdata["perpage"] = perpage;
 			postdata["highest"] = highest ? "y" : "n";
 			postdata["customfilters"] = numfilters;
+			postdata["table"] = escape(table);
 			
 			var request:URLRequest
 			if(facebook){
 				if(friendslist.length>0){
 					postdata["friendslist"] = friendslist.join(",");
 				}
-				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}else{
-				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}
+			
+			trace("postdata: "+postdata);
+			trace("request: "+request.url);
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;

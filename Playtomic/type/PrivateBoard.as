@@ -1,5 +1,5 @@
 ﻿package Playtomic.type{
-	public class cplResponse extends Object{
+	public class PrivateBoard extends Object{
 		
 		public var TableId:String;
 		public var Name:String;
@@ -8,7 +8,7 @@
 		public var Highest:Boolean = true;
 		public var RealName:String;
 		
-		public function cplResponse(TableId:String=null, Name:String=null, Bitly:String=null, Permalink:String=null, Highest:Boolean = false, RealName:String=null){
+		public function PrivateBoard(TableId:String=null, Name:String=null, Bitly:String=null, Permalink:String=null, Highest:Boolean = false, RealName:String=null){
 			this.TableId=TableId;
 			this.Name=Name;
 			this.Bitly=Bitly;
@@ -19,6 +19,8 @@
 		
 		public function toString():String{
 			var str:String = "::SaveOptions::\n";
+			str += " TableId: "+TableId;
+			str += "\n";
 			str += " Name: "+Name;
 			str += "\n";
 			str += " Bitly: "+Bitly;

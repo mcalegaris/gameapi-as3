@@ -37,9 +37,11 @@
 			self.listScores([]);
 		}
 		public static function MyBoardList(table:String=null):void{
+			trace("--MyBoardList");
 			self.List(table, "alltime");
 		}
 		public static function SaveAndListCallback(scores:Array, numscores:int, response:Response):void{
+			trace("SaveAndListCallback");
 			self.Show();
 			trace(response);
 			
@@ -47,8 +49,10 @@
 			self.listScores(scores);
 		}
 		public function ListCallback(scores:Array, numscores:int, response:Response):void{
+			trace("ListCallback");
 			trace(response);
-			
+			trace("scores: "+scores);
+			trace("numscores: "+numscores);
 			updatePageBtns(numscores);
 			listScores(scores);
 		}
@@ -103,11 +107,15 @@
 		private function dayClick(me:MouseEvent=null):void{changeMode(MODE.DAY)}
 		private function newestClick(me:MouseEvent=null):void{changeMode(MODE.NEWEST)}
 		private function myboardClick(me:MouseEvent=null):void{
+			trace("click myboardClick");
 			changeMode("myboard");
 			myboardgui.Show();
 		}
 		
 		private function List(_table:String, _mode:String):void{
+			trace("--@List: "+_mode);
+			trace("--@List: "+_table);
+			
 			var lo:ListOptions = new ListOptions();
 			lo.mode = _mode;
 			Leaderboards.List(_table, ListCallback, lo);
@@ -115,8 +123,15 @@
 		
 		private function changeMode(modeName:String):void{
 			if(!isShown)return;
+			myboardgui.Hide();
+			
+			if(selectedMode == modeName){
+				selectedMode = modeName;//will select the tab anyway, but not do any Listing.
+				return;
+			}
 			
 			selectedMode = modeName;
+			
 			page = 1;
 			List(table, selectedMode);
 			

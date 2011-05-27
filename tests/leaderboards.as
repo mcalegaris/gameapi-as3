@@ -9,7 +9,7 @@
 	import Playtomic.type.SaveOptions;
 	import Playtomic.type.ListOptions;
 	import Playtomic.type.SaveAndListOptions;
-	import Playtomic.type.cplResponse;
+	import Playtomic.type.PrivateBoard;
 	
 	import Playtomic.PlayerScore;
 	import Playtomic.Log;
@@ -42,7 +42,7 @@
 			trace("start create");
 			Leaderboards.CreatePrivateLeaderboard(txt_TableAlias.text, txt_Permalink.text, onCreatePrivateLeaderboard);
 		}
-		private function onCreatePrivateLeaderboard(dat:cplResponse, response:Response){
+		private function onCreatePrivateLeaderboard(dat:PrivateBoard, response:Response){
 			trace("end create");
 			trace(dat);
 			trace(response);
@@ -51,7 +51,7 @@
 			trace("start load");
 			Leaderboards.LoadPrivateLeaderboard(txt_TableID.text, onLoadPrivateLeaderboard);
 		}
-		private function onLoadPrivateLeaderboard(dat:cplResponse, response:Response){
+		private function onLoadPrivateLeaderboard(dat:PrivateBoard, response:Response){
 			trace("end load");
 			trace(dat);
 			trace(response);

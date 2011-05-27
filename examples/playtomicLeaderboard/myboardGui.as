@@ -3,7 +3,7 @@
 	import Playtomic.type.Response;
 	import Playtomic.Leaderboards;
 	import Playtomic.type.MODE;
-	import Playtomic.type.cplResponse;
+	import Playtomic.type.PrivateBoard;
 	
 	public class myboardGui extends MovieClip{
 		
@@ -22,10 +22,11 @@
 			createPrompt.visible=false;
 			removePrompt.visible=false;
 		}
-		private function Hide():void{
+		public function Hide():void{
 			visible=false;
 		}
 		public function Show():void{
+			trace("SHOW MyBoardGUI");
 			visible=true;
 			init();
 		}
@@ -71,11 +72,14 @@
 		}
 		
 		private function requestBoardNameById(id:String):void{
+			Leaderboards.LoadPrivateLeaderboard(id, onBoardNameById);
+		}
+		private function onBoardNameById(dat:PrivateBoard, response:Response):void{
 			
 		}
 		
 		
-		private function MyBoardCreated(dat:cplResponse, response:Response){
+		private function MyBoardCreated(dat:PrivateBoard, response:Response){
 			//recieved unique id.
 			if(response.Success){
 				soDATA.myboardIDs.push(dat.TableId);
@@ -84,8 +88,7 @@
 				mbLink.text = dat.Bitly;
 			}
 			
-			trace("dat.TableId: "+dat.TableId);
-			SendScreen.SaveToTable(dat.TableId);
+			SendScreen.SaveToTable(dat.RealName);
 			
 			//post id returns boardname.
 			//SaveAndList to MyBoard.
