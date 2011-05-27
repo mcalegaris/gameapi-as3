@@ -8,6 +8,8 @@
 		public var Highest:Boolean = true;
 		public var RealName:String;
 		
+		public var order:int = 1;//can be used to sortOn
+		
 		public function PrivateBoard(TableId:String=null, Name:String=null, Bitly:String=null, Permalink:String=null, Highest:Boolean = false, RealName:String=null){
 			this.TableId=TableId;
 			this.Name=Name;
@@ -18,7 +20,7 @@
 		}
 		
 		public function toString():String{
-			var str:String = "::SaveOptions::\n";
+			var str:String = "::PrivateBoard::\n";
 			str += " TableId: "+TableId;
 			str += "\n";
 			str += " Name: "+Name;

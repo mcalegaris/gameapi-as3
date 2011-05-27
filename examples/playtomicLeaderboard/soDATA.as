@@ -24,15 +24,19 @@
 				loadSendScreen( so.data.Send );
 				loadListScreen( so.data.List );
 			}
-			if(so.data && so.data.myboardID){
+			if(so.data && so.data.myboardIDs){
+				trace("so.data.myboardIDs: "+so.data.myboardIDs);
 				myboardIDs = so.data.myboardIDs;
 			}
+			trace("myboardIDs: "+myboardIDs.length);
 		}
 		public static function saveSO():void{
 			so.data.Send = saveSendScreen();
 			so.data.List = saveListScreen();
-			so.data.myboardIDs = myboardIDs;
+			so.data.myboardIDs = myboardIDs; //this gets converted to an Object and doesn't get converted back. :(
 			so.flush(); 
+			
+			trace("myboardIDs: "+myboardIDs.length);
 		}
 	}
 }

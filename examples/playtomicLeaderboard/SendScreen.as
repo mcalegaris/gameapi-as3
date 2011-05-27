@@ -4,6 +4,8 @@
 	import Playtomic.Leaderboards;
 	import flash.events.MouseEvent;
 	import flash.events.Event;
+	import Playtomic.type.SaveAndListOptions;
+	import Playtomic.type.Response;
 	
 	
 	public class SendScreen extends screen{
@@ -30,14 +32,40 @@
 		}
 		
 		public function Save():void{
-			trace("--@Save: "+"alltime");
+			trace("--@Save: "+ListScreen.SelectedMode);
 			trace("--@Save: "+"highscores");
 			
 			var score:PlayerScore = new PlayerScore(userName.text, int(score.text));
-			trace("score: "+score);
-			Leaderboards.SaveAndList(score, "highscores", ListScreen.SaveAndListCallback);
+			
+			//SaveAndList to the board we are going to see, and save to the rest.
+			if(ListScreen.SelectedMode == "myboard"){
+				if(soDATA.myboardIDs.length>0){
+					Leaderboards.SaveAndList(score, soDATA.myboardIDs[0].RealName, ListScreen.SaveAndListCallback);
+					saveToOtherMyBoards(score);
+					Leaderboards.Save(score, "highscores");
+				}else{
+					ListScreen.SaveAndListCallback([],0,new Response(true,0));
+				}
+			}else{
+				saveToAllMyBoards(score);
+				var salOptions:SaveAndListOptions = new SaveAndListOptions();
+				salOptions.mode = ListScreen.SelectedMode;
+				Leaderboards.SaveAndList(score, "highscores", ListScreen.SaveAndListCallback, salOptions);
+			}
 			
 			Hide();
+		}
+		private function saveToAllMyBoards(score:PlayerScore):void{
+			if(soDATA.myboardIDs.length > 0){
+				Leaderboards.Save(score, soDATA.myboardIDs[0].RealName);
+				saveToOtherMyBoards(score);
+			}
+		}
+		private function saveToOtherMyBoards(score:PlayerScore):void{
+			var count:int = soDATA.myboardIDs.length;
+			for(var n:int = 1; n<count; n++){
+				Leaderboards.Save(score, soDATA.myboardIDs[n].RealName);
+			}
 		}
 		
 		private function saveSendScreen():Object{

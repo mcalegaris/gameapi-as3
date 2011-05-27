@@ -21,6 +21,10 @@
 		public var page:int = 1;
 		public const perpage:int = 10;
 		
+		public static function get SelectedMode():String{
+			return self.selectedMode;
+		}
+		
 		private var Modes:Object;
 		private var _Mode:String = "alltime";
 		public function get selectedMode():String{
@@ -33,12 +37,13 @@
 			Modes[val].Selected=true;
 			_Mode = val;
 		}
+		
 		public static function Clear():void{
 			self.listScores([]);
 		}
-		public static function MyBoardList(table:String=null):void{
+		public static function MyBoardList(RealName:String=null):void{
 			trace("--MyBoardList");
-			self.List(table, "alltime");
+			self.List(RealName, "alltime");
 		}
 		public static function SaveAndListCallback(scores:Array, numscores:int, response:Response):void{
 			trace("SaveAndListCallback");
@@ -47,6 +52,10 @@
 			
 			self.updatePageBtns(numscores);
 			self.listScores(scores);
+			
+			if(self.selectedMode == "myboard"){
+				self.myboardgui.Show();
+			}
 		}
 		public function ListCallback(scores:Array, numscores:int, response:Response):void{
 			trace("ListCallback");
@@ -108,13 +117,15 @@
 		private function newestClick(me:MouseEvent=null):void{changeMode(MODE.NEWEST)}
 		private function myboardClick(me:MouseEvent=null):void{
 			trace("click myboardClick");
-			changeMode("myboard");
+			//changeMode("myboard");
+			selectedMode = "myboard";
+			//_Mode="myboard"
 			myboardgui.Show();
 		}
 		
 		private function List(_table:String, _mode:String):void{
-			trace("--@List: "+_mode);
-			trace("--@List: "+_table);
+			trace("--@List>mode: "+_mode);
+			trace("--@List>table: "+_table);
 			
 			var lo:ListOptions = new ListOptions();
 			lo.mode = _mode;
@@ -181,7 +192,9 @@
 			return obj;
 		}
 		private function loadListScreen(obj:Object):void{
-			Modes[obj.Mode].mClick();
+			trace("load soDATA list: "+obj.Mode);
+			//Modes[obj.Mode].mClick();
+			selectedMode=obj.Mode;
 		}
 	}
 }

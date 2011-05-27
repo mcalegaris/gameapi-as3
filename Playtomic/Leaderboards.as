@@ -120,6 +120,7 @@ package Playtomic
 					var errorcode:int = parseInt(data["errorcode"]);
 					
 					var responseData:PrivateBoard = new PrivateBoard(tableid, data["name"], data["bitly"], data["permalink"], data["highest"] == "true" ? true : false, data["realname"]);
+					trace("status: "+status);
 					callback(responseData, new Response(status == 1,  errorcode));
 				}
 

@@ -30,6 +30,7 @@
 		}
 		private function test(e:Event=null):void{//settings and events that would normally be handled by your game.
 			Log.View(2261, "8389db1c29914bbf", root.loaderInfo.loaderURL);
+			trace("Log.GUID: "+Log.GUID);
 			sendScreen.score.text = int(Math.random()*1000).toString();
 			trace("sendScreen.score.text: "+sendScreen.score.text);
 			sendScreen.Show();
