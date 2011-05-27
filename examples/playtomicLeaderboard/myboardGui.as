@@ -4,6 +4,7 @@
 	import Playtomic.Leaderboards;
 	import Playtomic.type.MODE;
 	import Playtomic.type.PrivateBoard;
+	import Playtomic.GameVars;
 	import flash.events.Event;
 	
 	public class myboardGui extends MovieClip{
@@ -32,6 +33,14 @@
 			
 			var linkBoardId:String = Leaderboards.GetLeaderboardFromUrl()//debugUrl);
 			requestBoardNameById(linkBoardId);
+			
+			GameVars.Load(onGameVars);
+		}
+		private function onGameVars(result:Object, response:Object):void{
+			if(response.Success){
+				permalink = result.permalink;
+				trace("got permalink from gamevars: "+permalink);
+			}
 		}
 		public function Hide():void{
 			visible=false;

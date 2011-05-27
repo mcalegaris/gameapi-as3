@@ -118,6 +118,7 @@
 		private function myboardClick(me:MouseEvent=null):void{
 			trace("click myboardClick");
 			//changeMode("myboard");
+			page = 1;
 			selectedMode = "myboard";
 			//_Mode="myboard"
 			myboardgui.Show();
@@ -129,6 +130,8 @@
 			
 			var lo:ListOptions = new ListOptions();
 			lo.mode = _mode;
+			lo.perpage=10;
+			lo.page=page;
 			Leaderboards.List(_table, ListCallback, lo);
 		}
 		

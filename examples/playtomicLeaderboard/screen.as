@@ -6,9 +6,11 @@
 		public var isShown:Boolean = false;
 		
 		public function Show():void{
+			if(!visible) tweenIn();
+			
 			isShown=true;
 			visible=true;
-			tweenIn();
+			
 		}
 		public function Hide():void{
 			if(!isShown){

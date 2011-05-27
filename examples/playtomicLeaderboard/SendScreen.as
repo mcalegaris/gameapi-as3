@@ -40,7 +40,9 @@
 			//SaveAndList to the board we are going to see, and save to the rest.
 			if(ListScreen.SelectedMode == "myboard"){
 				if(soDATA.myboardIDs.length>0){
-					Leaderboards.SaveAndList(score, soDATA.myboardIDs[0].RealName, ListScreen.SaveAndListCallback);
+					var salOptions:SaveAndListOptions = new SaveAndListOptions();
+					salOptions.perpage=10;
+					Leaderboards.SaveAndList(score, soDATA.myboardIDs[0].RealName, ListScreen.SaveAndListCallback, salOptions);
 					saveToOtherMyBoards(score);
 					Leaderboards.Save(score, "highscores");
 				}else{
@@ -50,6 +52,7 @@
 				saveToAllMyBoards(score);
 				var salOptions:SaveAndListOptions = new SaveAndListOptions();
 				salOptions.mode = ListScreen.SelectedMode;
+				salOptions.perpage=10;
 				Leaderboards.SaveAndList(score, "highscores", ListScreen.SaveAndListCallback, salOptions);
 			}
 			
