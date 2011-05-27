@@ -91,7 +91,7 @@ package Playtomic
 			postdata["highest"] = highest ? "y" : "n";
 			postdata["permalink"] = permalink;
 			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/create.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/create.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;	
@@ -139,7 +139,7 @@ package Playtomic
 			var postdata:URLVariables = new URLVariables();
 			postdata["tableid"] = tableid;
 			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/load.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/load.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;			
@@ -282,9 +282,9 @@ package Playtomic
 					postdata["friendslist"] = friendslist.join(",");
 				}
 				postdata["fbuserid"] = score.FBUserId;
-				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/saveandlistfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlistfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}else{
-				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/saveandlist.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}
 			
 			request.data = postdata;
@@ -381,7 +381,7 @@ package Playtomic
 			postdata["fbuserid"] = score.FBUserId;
 			postdata["customfields"] = customfields;
 			
-			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/save.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+			var request:URLRequest = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/save.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			request.data = postdata;
 			request.method = URLRequestMethod.POST;
 
@@ -459,9 +459,9 @@ package Playtomic
 				if(friendslist.length>0){
 					postdata["friendslist"] = friendslist.join(",");
 				}
-				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/listfb.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}else{
-				request = new URLRequest("http://g" + Log.GUID +".api4.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
+				request = new URLRequest("http://g" + Log.GUID +".api.playtomic.com/v2/leaderboards/list.aspx?swfid=" + Log.SWFID + "&r=" + Math.random());
 			}
 			
 			request.data = postdata;
