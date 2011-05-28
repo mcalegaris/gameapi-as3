@@ -38,8 +38,10 @@
 		}
 		private function onGameVars(result:Object, response:Object):void{
 			if(response.Success){
-				permalink = result.permalink;
-				trace("got permalink from gamevars: "+permalink);
+				if(result.permalink!=null){
+					permalink = result.permalink;
+					trace("got permalink from gamevars: "+permalink);
+				}
 			}
 		}
 		public function Hide():void{
