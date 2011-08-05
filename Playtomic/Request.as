@@ -27,7 +27,7 @@ package Playtomic
 		{
 			Pool = new Vector.<Request>();
 			Queue = new Vector.<Request>();
-			URLStub = "http://g" + Log.GUID + ".apitest.playtomic.com";
+			URLStub = "http://g" + Log.GUID + ".api.playtomic.com";
 			URLTail = "swfid=" + Log.SWFID;
 			URL = URLStub + "/v3/api.aspx?" + URLTail;
 						
@@ -57,7 +57,7 @@ package Playtomic
 		
 		internal static function Load(section:String, action:String, complete:Function, callback:Function, postdata:Object = null):void
 		{
-			trace("Request.Load " + section + " " + action);
+			//trace("Request.Load " + section + " " + action);
 			var request:Request = Pool.length > 0 ? Pool.pop() : new Request();
 			request.time = 0;
 			request.handled = false;
@@ -69,27 +69,31 @@ package Playtomic
 			var timestamp:String = String(new Date().time).substring(0, 10);
 			var nonce:String = Encode.MD5(new Date().time * Math.random() + Log.GUID);
 			
+			//trace(url);
+			
 			var pd:Array = new Array();
 			pd.push("nonce=" + nonce);
 			pd.push("timestamp=" + timestamp);
 			
 			for(var key:String in postdata)
-				pd.push(key + "=" + encodeURIComponent(postdata[key]));
+				pd.push(key + "=" + Escape(postdata[key]));
 				
-			trace("\npresig\n" + pd.join("\n"));
+			//pd.sort();
+				
+			//trace("\npresig: " + pd.join("&"));
 				
 			GenerateKey("section", section, pd);
 			GenerateKey("action", action, pd);
 			GenerateKey("signature", nonce + timestamp + section + action + url + Log.GUID, pd);
 			
-			trace("\nposting\n" + pd.join("\n"));
+			//trace("\nposting\n" + pd.join("\n"));
 			
 			var pda:ByteArray = new ByteArray();
 			pda.writeUTFBytes(pd.join("&"));
 			pda.position = 0;
 			
 			var postvars:URLVariables = new URLVariables();
-			postvars["data"] = escape(Encode.Base64(pda));
+			postvars["data"] = Escape(Encode.Base64(pda));
 			
 			request.urlRequest.url = url;
 			request.urlRequest.method = "POST";
@@ -98,16 +102,48 @@ package Playtomic
 			
 			//trace("posting data to " + url);
 
-			request.load(request.urlRequest);
+			
+			try
+			{
+				request.load(request.urlRequest);
+			}
+			catch(s:Error)
+			{
+				request.complete(request.callback, request.postdata, null, new Response(0, 1));
+			}
+			
 			Queue.push(request);
+		}
+		
+		private static function Escape(str:String):String
+		{
+			if(str == null)
+				return "";
+			
+			str = str.split("%").join("%25");
+			str = str.split(";").join("%3B");
+			str = str.split("?").join("%3F");
+			str = str.split("/").join("%2F");
+			str = str.split(":").join("%3A");
+			str = str.split("#").join("%23");
+			str = str.split("&").join("%26");
+			str = str.split("=").join("%3D");
+			str = str.split("+").join("%2B");
+			str = str.split("$").join("%24");
+			str = str.split(",").join("%2C");
+			str = str.split(" ").join("%20");
+			str = str.split("<").join("%3C");
+			str = str.split(">").join("%3E");
+			str = str.split("~").join("%7E");
+			return str;
 		}
 		
 		private static function GenerateKey(name:String, key:String, arr:Array):void
 		{
 			arr.sort();
 
-			if(name == "section")
-				trace("joined is " + arr.join("&"));
+			//if(name == "section")
+			//	trace("joined is " + arr.join("&"));
 				
 			arr.push(name + "=" + Encode.MD5(arr.join("&") + key));
 		}
@@ -124,7 +160,7 @@ package Playtomic
 				{
 					request.time++;
 	
-					if(request.time < 1200)
+					if(request.time < 20)
 						continue;
 						
 					if(request.logging)
@@ -164,7 +200,7 @@ package Playtomic
 				return;
 			}
 			
-			trace(request.data);
+			//trace(request.data);
 			
 			var data:XML = XML(request.data);
 			var status:int = parseInt(data["status"]);
@@ -175,7 +211,7 @@ package Playtomic
 		
 		private static function Fail(e:Event):void
 		{
-			trace("fail");
+			//trace("fail");
 			var request:Request = e.target as Request;
 			
 			if(request.handled)
